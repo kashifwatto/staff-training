@@ -1,0 +1,1380 @@
+
+
+
+
+/* Dashboard CSS */
+
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap');
+
+
+.page-template-template-dashboard footer#colophon, .page-template-template-dashboard header {
+
+    display: none;
+
+}
+
+.dashboard-section{
+    width:100% !important;
+} 
+
+.dashboard-section .main-content {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    width: 100%;
+
+    background: #f9f7f9;
+
+    font-family: 'Roboto', sans-serif;
+
+}
+
+
+
+
+.dashboard-section .main-content .content-left {
+
+    flex: 0 0 20%;
+    width: 20%;
+    background: #fff;
+    padding: 10px;
+
+}
+
+.custom-site-logo {
+    text-align: center;
+}
+
+
+
+.dashboard-section .main-content .content-right {
+
+    flex: 0 0 80%;
+    width: 80%;
+
+    padding: 5px 20px 50px;
+
+    height: 100%;
+
+
+
+}
+
+
+
+.dashboard-section .main-content .content-right .info-content.box-shadows, .dashboard-section .main-content .content-left .info-content.box-shadows {
+    font-size: 16px;
+    text-align: center;
+    color: #8f8e8f;
+}
+.info-content .nav-wrap {
+    display: flex;
+    justify-content: end;
+}
+.info-content button.navigation {
+    background: transparent;
+    margin: 5px;
+    padding: 9px 20px 11px;
+    font-weight: 400;
+    line-height: 1;
+    border-radius: 20px;
+    border: 1px solid;
+    opacity: 1;
+    cursor: pointer;
+    pointer-events: all;
+    color: var(--global-color);
+}
+
+.info-content button.navigation:hover {
+    background: var(--global-color);
+    /* border: 1px solid var(--global-color); */
+    color: #fff;
+}
+
+.info-content button.navigation:disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.dashboard-section .main-content .content-right .box-shadows, .dashboard-section .main-content .content-left .box-shadows {
+
+    box-shadow: 0px 0px 10px rgb(0 0 0 / 15%);
+
+    padding: 30px;
+
+    border-radius: 10px;
+
+    background: #fff;
+
+}
+
+
+
+.dashboard-section .main-content .content-right .block-section {
+
+    margin-top: 35px;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    grid-gap: 35px;
+
+}
+
+
+
+
+.learning-modules .top-section {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    width: 100%;
+
+    padding: 0 20px 60px 20px;
+
+}
+
+
+
+.learning-modules .top-section .learning-img-btn{
+
+    flex: 0 0 30%;
+
+    width: 30%;
+
+}
+
+.learning-modules .top-section .learning-modules-content {
+
+    flex: 0 0 70%;
+
+    width: 70%;
+
+    padding-left: 60px; 
+
+    padding-top: 30px;
+
+    font-family: 'Roboto', sans-serif;
+
+}
+
+
+
+
+
+.learning-modules .top-section .img-wrapper {
+
+    background: #e7f6ff;
+
+    border-radius: 50%;
+
+    height: 100px;
+
+    padding: 20px;
+
+    width: 100px;
+
+    margin: 0 auto;
+
+}
+
+
+
+.learning-modules .top-section h3 {
+
+    margin: 0;
+
+    font-size: 16px;
+
+    text-align: center;
+
+    padding: 30px 0 20px;
+
+    text-transform: capitalize;
+
+    color: #343434;
+
+    font-family: 'Roboto', sans-serif;
+
+    font-weight: 500;
+
+}
+
+.selfAssignButton{
+    background-color: var(--global-color) !important;
+} 
+
+.learning-modules .top-section a {
+
+    display: block;
+
+    width: 90%;
+
+    text-align: center;
+
+    color: var(--global-color);
+
+    border: 1px solid var(--global-color);
+
+    font-size: 14px;
+
+    padding: 5px;
+
+    margin: 0 auto;
+
+    font-weight: bold;
+
+    text-transform: uppercase;
+
+    font-family: 'Roboto', sans-serif;
+
+    text-decoration: none !important;
+
+}
+
+
+
+.learning-modules .top-section a:hover {
+
+    background: var(--global-color);
+
+    color: #fff;
+
+}
+
+
+
+.learning-modules .top-section .learning-modules-content ul{
+
+    margin: 0;
+
+    list-style-type: none;
+
+    padding: 0;
+
+}
+
+
+
+.learning-modules .top-section .learning-modules-content ul li a:hover {
+
+    background: none;
+
+    color: #000;
+
+}
+
+
+
+.learning-modules .top-section .learning-modules-content ul li a {
+
+    width: 100%;
+
+    text-transform: capitalize;
+
+    font-weight: 500;
+
+    font-family: 'Roboto', sans-serif;
+
+    border: 0;
+
+    text-align: left;
+
+    color: #8c8c8c;
+
+    font-size: 16px;
+
+    line-height: 1.5;
+
+    padding: 0;
+
+}
+
+
+
+.learning-modules .top-section .learning-modules-content ul li {
+
+    padding-bottom: 15px;
+
+    position: relative;
+
+}
+
+
+
+.learning-modules .top-section .learning-modules-content ul li.completed:before {
+
+    content: '';
+    
+    background-image: url(/wp-content/uploads/2022/02/check-3-1.png);
+
+    width: 20px;
+
+    display: block;
+
+    position: absolute;
+
+    height: 20px;
+
+    background-repeat: no-repeat;
+
+    background-size: contain;
+
+    right: 0px;
+
+    top: 3px;
+
+}
+.learning-modules .top-section .learning-modules-content ul li.completed.green-check:before{
+    background-image: url(/wp-content/uploads/2022/02/check-3-1.png);
+}
+
+.learning-modules .top-section .learning-modules-content ul li.completed.red-check:before{
+    background-image: url(/wp-content/uploads/2022/10/check-red.png);
+}
+
+
+
+.learning-modules .top-section .learning-modules-content ul li:last-child {
+
+    padding-bottom: 0;
+
+}
+
+
+
+.learning-modules .progress-section {
+
+    display: block;
+
+    width: 100%;
+
+    padding: 20px 25px 0;
+
+    border-top: 2px solid #eee;
+
+}
+
+
+
+.learning-modules .progress-section .bar-top {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    flex-wrap: wrap;
+
+    color: #8c8c8c;
+
+    text-transform: capitalize;
+
+    font-size: 16px;
+
+}
+
+
+
+.learning-modules .progress-section .bar-top label{ 
+
+    font-weight: 700;
+
+    color: #343434;
+
+}
+
+.learning-modules .progress-section .bar-top  .pro-percentage{
+    padding-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.learning-modules .progress-section .bar-top  .pro-percentage span{
+    line-height: normal;
+    margin-right: 5px;
+}
+
+
+
+.learning-modules .progress-section .pro-percentage-bar {
+
+    height: 10px;
+
+    border-radius: 10px;
+
+    background: #d2d1d3;
+
+    margin-top: 0px;
+
+    position: sticky;
+
+    z-index: 0;
+
+}
+
+
+
+.learning-modules .progress-section .pro-percentage-bar .current-progress{
+
+    background: var(--global-color);  
+
+    content: '';
+
+    display: block;
+
+    height: 10px;
+
+    border-radius: 10px;
+
+    z-index: 1;
+
+}
+
+
+
+
+
+.dashboard-section .main-content .content-left .completed-list {
+
+    padding-top: 35px;
+
+}
+
+
+
+.dashboard-section .main-content .content-left .completed-list ul {
+
+    margin: 0;
+
+    padding: 0px 0 0 0px;
+
+    list-style-type: none;
+
+}
+
+
+
+.dashboard-section .main-content .content-left .completed-list label {
+
+    margin: 0;
+
+    font-size: 20px;
+
+    padding-bottom: 20px;
+
+    text-transform: capitalize;
+
+    color: #343434;
+
+    font-weight: bold;
+
+    display: block;
+
+}
+
+
+
+.dashboard-section .main-content .content-left .completed-list ul li{
+
+    line-height: 1.5;
+
+    padding-bottom: 15px;
+
+    font-size: 18px;
+
+    position: relative;
+
+    text-transform: capitalize;
+
+    font-weight: 500;
+
+    color: #3c3c3c;
+
+    padding-right: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-section .main-content .content-left .completed-list ul li:last-child{
+
+    padding-bottom: 0px;
+
+}
+
+.dashboard-section .main-content .content-left .completed-list ul li .accordian-image{
+    flex: 0 0 25px;
+    width: 25px;
+    display: inline-flex;
+    align-items: center;
+}
+.dashboard-section .main-content .content-left .completed-list ul li .accordian-image{
+    flex: 0 0 25px;
+    width: 25px;
+    display: inline-flex;
+    align-items: center;
+}
+
+
+
+
+.dashboard-section .main-content .content-left .completed-list ul li.accordion-title a {
+
+    flex: 0 0 calc(100% - 35px);
+    width: calc(100% - 35px);
+    text-transform: capitalize;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
+    color: #3c3c3c;
+    padding-right:15px;
+    position: relative;
+    line-height: 1.5;
+    font-size: 18px;
+    position: relative;
+    text-decoration:none !important ;
+
+}
+.dashboard-section .main-content .content-left .completed-list ul li .show-popup span.dashicons {
+    position: absolute;
+    right: 0;
+    font-size: 15px;
+    top: 5px;
+    font-weight: 600;
+}
+.overlay-bg {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height:100%;
+    width: 100%;
+    cursor: pointer;
+    z-index: 1000; /* high z-index */
+    background: #000; /* fallback */
+    background: rgba(0,0,0,0.75);
+}
+.overlay-content button.close-btn {
+    background: transparent;
+    color: #000;
+    position: absolute !important;
+    right: 10px;
+    top: 0;
+}
+.dashboard-section .main-content .content-left div.popup, .content-right div.popup { 
+    /*.completed-list*/
+
+    display: none;
+    background: #fff;
+    padding: 1%;
+    width: 40%;
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    margin: 0 0 0 -20%; /* add negative left margin for half the width to center the div */
+    cursor: default;
+    z-index: 10001;
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.9);
+
+}
+.content-right div.popup {
+    max-height: calc(100vh - 100px);
+    overflow: auto;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.dash-lb table {
+    border: 0;
+}
+
+.dash-lb table thead th,.dash-lb table tbody td {
+    border: 0;
+    padding: 5px 15px;
+    text-align: left;
+    font-size: 18px;
+}
+
+.dash-lb table thead th {
+    background: var(--global-color)4f; 
+    /* #e7f6ff; */
+}
+
+.dash-lb table tbody td {
+    border: 1px solid #e7f6ff;
+    font-size: 16px;
+}
+
+.dash-lb .learning-top-header h4 {
+    margin: 15px 15px 20px 15px;
+}
+/* .dashboard-section .main-content .content-left .completed-list ul li.accordion-title:before {
+
+    content: '+';
+
+    position: absolute;
+
+    right: 0;
+
+} */
+
+/*quiz result modal dashboard */
+div.overlay-content div.popup {
+    width: 150% !important;
+    margin: 0 auto !important;
+    top: -10% !important;
+    left: -23% !important;
+    height: 650px;
+    overflow: scroll;
+    display: flex;
+} 
+div.overlay-content div.popup ol.quiz-result-list li {
+   width: 100%;
+    display: list-item !important;
+}
+div.overlay-content div.popup ol.quiz-result-list li div{
+    width:100% !important;
+    display: block !important;
+}
+div.overlay-content div.popup ol.quiz-result-list li div p{
+    margin:5px 0 !important;
+}
+ol.quiz-result-list, ol.quiz-result-list li span,ol.quiz-result-list li p {
+    font-size: 15px !important;
+}
+
+table.info-tab h6 {
+    font-size: 18px;
+}
+/*quiz result modal dashboard end*/
+.dashboard-section .main-content .content-left .completed-list ul li.accordion-title.open:before {
+
+    content: '-';
+
+}
+
+.dashboard-section .main-content .content-left .completed-list ul li.accordion-title.open div {
+
+    display: block;
+
+}
+
+.dashboard-section .main-content .content-left .completed-list ul li.accordion-title a:hover {
+
+    color: #000000;
+
+}
+ .logout_link a {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    width: 90%;
+    text-align: center;
+    color: var(--global-color);
+    font-size: 12px;
+    padding: 5px;
+    margin: 0 auto 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-family: 'Roboto', sans-serif;
+    text-decoration: none !important;
+    max-width: 150px;
+}
+.lg-icon svg {
+    width: 15px;
+    height: 15px;
+}
+
+
+.lg-text, .lg-icon {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+}
+
+.lg-text {
+    margin-right: 5px;
+}
+
+.logout_link a:hover {
+
+    opacity: 0.7;
+}
+span.avg-score {
+    padding-left: 0;
+    padding-right: 10px;
+    font-size: 14px;
+    color: var(--global-color);
+}
+.learning-modules .learning-img-btn a {
+    margin: 5px 0;
+}
+.swal2-container{
+    z-index: 99999 !important;
+}
+.swal2-container .swal2-title:before{
+    background: unset !important;
+    margin:0
+}
+.dashboard-section .main-content .content-right .logout_link {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: end;
+    margin: 0;
+}
+.content-right .logout_link a {
+    margin: 0;
+    width: auto;
+}
+
+.custom-site-logo img{
+    max-width: 70%;
+}
+
+/**shopping items popup */
+.atl-sel-prod .modal-header {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 10px;
+}
+.atl-sel-prod ul {
+    list-style: none;
+    padding: 0;
+}
+
+.atl-sel-prod ul li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.atl-sel-prod .modal-footer {
+    background: #f5f5f5;
+    padding: 0;
+    margin: 30px 0 0;
+    width: 100%;
+}
+
+/* atl-sel-prod Modal */
+.atl-sel-prod h5 {
+    padding: 0;
+    margin: 0;
+}
+
+.atl-sel-prod .modal-content {
+    padding: 5px;
+}
+
+.atl-sel-prod .modal-header {
+    align-items: center;
+    margin: 0;
+    border-bottom: 1px solid rgb(0 0 0 / 15%);
+    padding: 0 0 10px 0;
+}
+
+.atl-sel-prod .modal-header a.close {
+    color: rgb(0 0 0);
+}
+
+
+.atl-sel-prod .modal-body ul li + li {
+    border-top: 1px solid rgb(0 0 0 / 15%);
+}
+
+.atl-sel-prod .modal-body ul {
+    padding: 0;
+    margin: 0;
+}
+
+.atl-sel-prod .modal-body ul li {
+    align-items: center;
+    padding: 10px 0;
+    position: relative;
+}
+.atl-sel-prod .modal-body ul li .shop-loader{
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 25px;
+    background: #f4f4f4 !important;
+    width: 115px;
+    height:40px;
+    text-align: center;
+    vertical-align: middle;
+    align-self: center;
+
+}
+.atl-sel-prod .modal-body ul li .shop-loader img{
+margin-top:5px;
+}
+.atl-sel-prod .modal-body ul li .shop-loader.show{
+    display: block;
+}
+.atl-sel-prod .modal-body ul li .image {
+    width: 70px;
+    height: 70px;
+}
+
+.atl-sel-prod .modal-body ul li .image img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+
+.atl-sel-prod .purchase a {
+    text-align: center;
+    color: #fff;
+    border: 1px solid var(--global-color);
+    font-size: 16px;
+    padding: 5px 14px;
+    background: var(--global-color);
+    line-height: 28px;
+    display: block;
+    min-width: 115px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.atl-sel-prod .purchase a:hover {
+    /* color: var(--global-color); */
+    background: var(--global-color);
+}
+.atl-sel-prod .purchase a.disabled {
+    background: rgb(0 0 0 / 15%);
+    border: 1px solid rgb(217 217 217);
+    pointer-events: none;
+}
+.atl-sel-prod ul li .info {
+    width: calc(100% - 185px);
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 15px 0 25px;
+}
+
+.atl-sel-prod ul li .info span {
+    width: 100%;
+    line-height: 1;
+    color: rgb(0 0 0 / 75%);
+    font-size: 16px;
+}
+
+.atl-sel-prod ul li .info span + span {
+    color: #000;
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: bold;
+}
+
+.shop-button {
+    position: fixed;
+    bottom: 0;
+    width: 20%;
+    padding: 10px 20px;
+    left: 0;
+}
+
+.shop-button .btn-shop {
+    width: 100%;
+    background: var(--global-color);
+    border-radius: 0;
+}
+.shop-button .btn-shop:hover {
+    background: var(--global-color) !important;
+    opacity: 0.7;
+}
+
+
+
+@media all and (min-width:768px){
+    .content-left .logout_link {
+        display:none;
+    }
+}
+
+@media only screen and (min-width: 991px) and (max-width: 1400px)  {
+
+    
+
+    .learning-modules .top-section .learning-modules-content, 
+
+    .learning-modules .top-section .learning-img-btn{
+
+        flex: 0 0 100%;
+
+        width: 100%;
+
+        position: relative;
+
+    }
+
+    .learning-modules .top-section .learning-modules-content {
+
+        padding-left: 0;
+
+    }
+
+    .learning-modules .top-section .learning-img-btn{
+
+        padding-left: 150px;
+
+        padding-bottom: 40px;
+
+    }
+
+    .learning-modules .top-section{
+
+        padding: 0 0px 60px;
+
+    }
+
+    .learning-modules .top-section h3 {
+
+        text-align: left;
+
+        padding-top: 20px;
+
+    }
+
+    .learning-modules .top-section .img-wrapper {
+
+        position: absolute;
+
+        left: 0;
+
+    }
+
+    .learning-modules .top-section a{
+
+        max-width: 150px;
+
+        width: 100%;
+
+        margin: 0px;
+
+    }
+
+}
+
+
+
+
+
+@media only screen and (min-width: 991px) and (max-width: 1024px)  {
+
+    .learning-modules .top-section .img-wrapper{
+
+        width: 100px;
+
+        height: 100px;
+
+    }
+
+    .learning-modules .top-section h3{
+
+        padding-top: 10px;
+
+    }
+
+    .learning-modules .top-section .learning-img-btn{
+
+        padding-left: 120px;
+
+        padding-bottom: 20px;
+
+    }
+
+
+
+
+
+}
+
+
+@media only screen and (max-width: 1024px)  {
+
+    .dashboard-section .main-content .content-left {
+
+        flex: 0 0 25%;
+
+        width: 25%;
+
+        background: #fff;
+
+        padding: 50px 20px;
+
+    }
+
+
+
+    .dashboard-section .main-content .content-right {
+
+        flex: 0 0 75%;
+
+        width: 75%;
+
+        padding: 10px 25px 50px;
+
+
+
+    }
+
+    .custom-site-logo img {
+        max-width: 90%;
+    }
+    .dashboard-section .main-content .content-left div.popup {
+        width: 60%;
+        margin: 0 0 0 -30%;
+    }
+    .shop-button{
+        width: 25%;
+        padding: 10px 15px;
+    }
+    .shop-button .btn.btn-shop {
+        font-size: 16px;
+        padding: 15px 10px;
+    }
+
+}
+
+
+
+
+
+@media only screen and (max-width: 991px)  {
+
+    .dashboard-section .main-content .content-right .block-section {
+
+        grid-template-columns: 1fr;
+
+    }
+    .dashboard-section .main-content .content-left .completed-list ul li.accordion-title a{
+        font-size: 16px;
+    }
+    .dashboard-section .main-content .content-left {
+        padding: 50px 15px;
+    }
+
+}
+
+
+@media only screen and (max-width: 767px)  {
+
+    .content-right .logout_link {
+        display:none !important;
+    }
+
+    .dashboard-section .main-content .content-right .info-content.box-shadows{
+
+        font-size: 16px;   
+
+    }
+
+    .dashboard-section .main-content .content-left .completed-list label{
+
+        text-align: center;
+
+    }
+
+    .dashboard-section .main-content .content-left .completed-list ul{
+
+        text-align: center;
+
+        padding: 0;
+
+    }
+    .dashboard-section .main-content .content-left .completed-list ul li.accordion-title a{
+        padding-right:unset;
+        text-align: left;
+    }
+    .dashboard-section .main-content .content-left .completed-list ul li.accordion-title .learning-img-btn a{
+        color:var(--global-color);
+        margin: 0 auto;
+        padding: 10px;
+    }
+    .dashboard-section .main-content .content-left .custom-site-logo {
+
+        text-align: center;
+
+        max-width: 250px;
+
+        margin:15px auto 0;
+
+    }
+
+    .dashboard-section .main-content .content-left, .dashboard-section .main-content .content-right {
+
+        flex: 0 0 100%;
+
+        width: 100%;
+
+    }
+    .dashboard-section .main-content .content-left .logout_link{
+        display: flex;
+        justify-content: space-between;
+        padding: 5px;
+        background: var(--global-color);
+        width: calc(100% + 30px);
+        margin-left: -15px;
+    }
+     .dashboard-section .main-content .content-right{
+
+        height: 100%;
+
+     }
+     .overlay-content .learning-modules .top-section .learning-modules-content, 
+     .overlay-content .learning-modules .top-section .learning-img-btn{
+        flex: 0 0 100%;
+        width: 100%;
+        position: relative;
+     }
+     .overlay-content .learning-modules .top-section .learning-modules-content{
+        padding-left:0px;
+     }
+
+     .dashboard-section .main-content .content-left .completed-list ul li .show-popup span.dashicons{
+        /* right: -20px; */
+        display:none;
+     }
+     .dashboard-section .main-content .content-left .completed-list ul li{
+        padding-right: 0;
+     }
+
+     .content-left .logout_link a{
+        margin: 0;
+        flex-direction: column-reverse;
+        font-size: 11px;
+        text-transform: capitalize;
+        color: #fff;
+        justify-content: center;
+     }
+     .content-left .lg-text{
+        margin: 5px 0 0 0;
+     }
+     .content-left .lg-icon svg {
+        width: 22px;
+        height: 22px;
+    }
+     .dashboard-section .main-content .content-left .custom-site-logo{
+        text-align: center;
+     }
+     .custom-site-logo img {
+        max-width: 70%;
+    }
+    .dashboard-section .main-content .content-left{
+        padding-top: 0px;
+    }
+    .shop-button {
+        width: 100%;
+        z-index: 1;
+        position: unset;
+    }
+     /* product modal */
+     .dashboard-section .main-content .content-left div.popup {
+        width: 100%;
+        max-width: calc(100% - 40px);
+        left: 20px;
+        transform: unset;
+        margin: 0;
+    }
+    .dashboard-section .main-content .content-left .completed-list div.popup div.popup {
+        margin: 0 auto !important;
+        left: 0% !important;
+        max-width: 100% !important;
+    }
+    .atl-sel-prod .modal-body ul li {
+        flex-wrap: wrap;
+    }
+    .atl-sel-prod ul li .info span {
+        font-size: 14px;
+    }
+    .atl-sel-prod ul li .info span + span {
+        font-size: 16px;
+        line-height: 26px;
+    }
+
+}
+
+
+
+@media only screen and (max-width: 600px)  {
+
+    .learning-modules .top-section .learning-modules-content, 
+
+    .learning-modules .top-section .learning-img-btn{
+
+        flex: 0 0 100%;
+
+        width: 100%;
+
+        position: relative;
+
+    }
+
+    .learning-modules .top-section .learning-modules-content {
+
+        padding-left: 0;
+
+    }
+
+    .learning-modules .top-section .learning-img-btn{
+
+        padding-left: 150px;
+
+        padding-bottom: 40px;
+
+    }
+
+    .learning-modules .top-section{
+
+        padding: 0 0px 60px;
+
+    }
+
+    .learning-modules .top-section h3 {
+
+        text-align: left;
+
+        padding-top: 20px;
+
+    }
+
+    .learning-modules .top-section .img-wrapper {
+
+        position: absolute;
+
+        left: 0;
+
+    }
+    .learning-modules .top-section .learning-modules-content ul li a {
+        max-width: unset;
+    }
+    .learning-modules .top-section .learning-modules-content ul li{
+        padding-right: 30px;
+    }
+    .learning-modules .top-section a{
+
+        max-width: 150px;
+
+        width: 100%;
+
+        margin: 0px;
+
+    }
+
+    .learning-modules .top-section .img-wrapper{
+
+        width: 100px;
+
+        height: 100px;
+
+    }
+
+    .learning-modules .top-section h3{
+
+        padding-top: 10px;
+
+    }
+
+    .learning-modules .top-section .learning-img-btn{
+
+        padding-left: 120px;
+
+        padding-bottom: 20px;
+
+    }
+
+    .learning-modules .progress-section{
+
+        padding: 20px 0 0;
+
+    }
+   
+
+}
+
+
+
+@media only screen and (max-width: 520px)  {
+
+    .learning-modules .top-section .learning-img-btn {
+
+        padding-left: 0;
+
+        position: relative;
+
+    }
+
+    .learning-modules .top-section h3{
+
+        text-align: center;
+
+    }
+
+    .learning-modules .top-section a{
+
+        margin: 0 auto;
+
+    }
+
+    .learning-modules .top-section .img-wrapper{
+
+        position: relative;
+
+    }
+
+    .learning-modules .top-section .learning-modules-content ul li{
+
+        font-size: 16px;
+
+    }
+    .dashboard-section .main-content .content-left .completed-list div.popup div.popup {
+       
+        max-width: calc(100vw - 30px) !important;
+        left: -40px !important;
+        transform: unset !important;
+        top: -40px !important;
+    }
+    .dashboard-section .main-content .content-left .completed-list div.popup {
+        width: 100%;
+        margin: 0 2%;
+        left: 15px;
+    }  
+
+}
+
+@media(max-width:375px){
+    .dashboard-section .main-content .content-left div.popup {
+        width: 100%;
+        max-width: calc(100% - 40px);
+        left: 20px;
+        transform: unset;
+        margin: 0;
+    }
+    
+    .atl-sel-prod .modal-body ul li {
+        flex-wrap: wrap;
+    }
+    
+    .atl-sel-prod .modal-body ul li .purchase {
+        width: 100%;
+        margin: 10px 0 0 0;
+    }
+    
+    .atl-sel-prod ul li .info {
+        width: calc(100% - 70px);
+        padding: 0 10px 0px 10px;
+    }
+    
+    .atl-sel-prod .modal-body ul li .purchase a {
+        margin: 0 auto;
+    }
+}
