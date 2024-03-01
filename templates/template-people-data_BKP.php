@@ -2,8 +2,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
-if (!defined('st_my_plugin_dir_folder')) {
-    define('st_my_plugin_dir_folder', plugin_dir_url(__File__));
+if (!defined('mystaff_training_plugin_dir_folder')) {
+    define('mystaff_training_plugin_dir_folder', plugin_dir_url(__File__));
 }
 //quiz_details, quiz_user_details, learning_sections
 global $wpdb;
@@ -39,7 +39,7 @@ foreach ($q1 as $key => $value) {
     <div class="people-list">
         <ul>
             <?php foreach ($kp as $key => $value) {                
-                $display_name = myst_staff_training_get_display_name($key);
+                $display_name = mystaff_training_staff_training_get_display_name($key);
                 $name =  $display_name;   
                 $user_id = $key;  
                 if($name) {   ?>
@@ -47,7 +47,7 @@ foreach ($q1 as $key => $value) {
                     <div class="people-name">                     
                     <!-- Trigger the modal with a button -->
                     <a  class="name-info" data-toggle="modal" data-target="#myModal-<?php echo esc_attr($user_id);?>">
-                    <?php echo $name;?></a>                  
+                    <?php echo esc_html($name);?></a>                  
                         <!-- Modal -->
                         <div class="modal fade" id="myModal-<?php echo esc_attr($user_id);?>" role="dialog">
                             <div class="modal-dialog">                            
@@ -106,7 +106,7 @@ foreach ($q1 as $key => $value) {
                             ?>
                        
                         <div class="pro-percentage">                
-                        <img src="<?php echo st_my_plugin_dir_folder.'/images/'.$cls; ?>" width="25px;"/>
+                        <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/images/'.$cls); ?>" width="25px;"/>
                             <p><?php echo  esc_html(round($quiz_score)); ?>%</p>
                         </div> 
                         <?php } ?>          

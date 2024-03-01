@@ -3,7 +3,7 @@
 
     'use strict';
     
-    jQuery('.myst_learning_modules_action_btn_quiz a').click(function(e){
+    jQuery('.mystaff_training_learning_modules_action_btn_quiz a').click(function(e){
         jQuery(".popup-quiz-overlay, .popup-content").show();
         jQuery('body').addClass('has-popup');
     });
@@ -16,13 +16,13 @@
         $(window).on('load', function(){
             //console.log($('#quiz_btn_timer').val());
             startTimer();
-            $('#quiz_btn_timer').siblings('.myst_learning_modules_action_btn_quiz').children('.start_quiz').addClass('disabled');
+            $('#quiz_btn_timer').siblings('.mystaff_training_learning_modules_action_btn_quiz').children('.start_quiz').addClass('disabled');
 
             setTimeout(function(){
 
                 $('#quiz_abailable_text').hide();
 
-                $('#quiz_btn_timer').siblings('.myst_learning_modules_action_btn_quiz').children('.start_quiz').removeClass('disabled');
+                $('#quiz_btn_timer').siblings('.mystaff_training_learning_modules_action_btn_quiz').children('.start_quiz').removeClass('disabled');
             
             }, ($('#quiz_btn_timer').val() * 1000) );
 
@@ -68,13 +68,12 @@
                 arr[success] = {answerid : jQuery.makeArray(answrap.find('input:checked').map(function(){ return jQuery(this).val(); })) };
 
                 if(success == jQuery('.question-wrapper').length){
-                    
-
+console.log(arr);
                     $.ajax({
                         url: myAjax.ajax_url,
                         type: 'post',
                         data: {
-                            action: "myst_quiz_modules_save_action_frontend",
+                            action: "mystaff_training_quiz_modules_save_action_frontend",
                             quizid: jQuery('input[name=quiz_id]').val(),
                             userid: jQuery('input[name=user_id]').val(),
                             quizdata: arr
@@ -120,7 +119,7 @@
    
 
 
-    jQuery('.myst_learning_modules_action_btn a, .continue-btn').click(function(e){
+    jQuery('.mystaff_training_learning_modules_action_btn a, .continue-btn').click(function(e){
         jQuery(this).attr('disabled',true).css({'opacity':'0.6', 'pointer-events':'none', 'cursor':'not-allowed'});
         
         e.preventDefault();
@@ -136,7 +135,7 @@
 
             data: {
 
-                action: "myst_learning_modules_save_action",
+                action: "mystaff_training_learning_modules_save_action",
 
                 data: url,
 
@@ -268,7 +267,7 @@
                     url: myAjax.ajax_url, 
                     type: "POST",             
                     data: { 
-                        action: 'myst_staff_training_redo_course_module', 
+                        action: 'mystaff_training_staff_training_redo_course_module', 
                         sectionid: sectionid,
                     },      
                     success: function(data) {
@@ -295,7 +294,7 @@
             url: myAjax.ajax_url, 
             type: "POST",             
             data: { 
-                action: 'myst_staff_training_atl_create_order', 
+                action: 'mystaff_training_staff_training_atl_create_order', 
                 productid: jQuery(this).attr('data-pid'),
                 productprice : jQuery(this).attr('data-price'),
             },

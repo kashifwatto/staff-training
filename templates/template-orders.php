@@ -8,7 +8,6 @@ global $wpdb;
 <div class="atl-main-section">
     <div class="atl-top-header">
         <h1>Orders</h1>
-        <!-- <a href="<?php echo admin_url('admin.php?page=shop-items'); ?>&action=add">+ Add New Product</a> -->
     </div>
     <?php 
     
@@ -144,7 +143,7 @@ global $wpdb;
                         url: '<?php echo admin_url('admin-ajax.php'); ?>',
                         type: "POST",
                         data: {
-                            action: 'myst_staff_training_atl_delete_order',
+                            action: 'mystaff_training_staff_training_atl_delete_order',
                             order_id : id
                         },
                         success: function(data) {

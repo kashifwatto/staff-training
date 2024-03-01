@@ -3,9 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
-if (!defined('st_my_plugin_dir_folder')) {
-    define('st_my_plugin_dir_folder', plugin_dir_url(__File__));
-}
+
 global $wpdb;
 $avg;
 if(isset($_GET['action'])){
@@ -19,7 +17,7 @@ if(isset($_GET['action'])){
                 <form action="" method="" id="add_form" name="add_form">
                     <div class="top-section-details">
                         <div class="section_upload_icon">
-                            <label for="section_icon"><img width="50px" src="<?php echo st_my_plugin_dir_folder?>/icons-camera.png"/></label>
+                        <label for="section_icon"><img width="50px" src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/icons-camera.png'); ?>"/></label>
                             <input id="section_icon" name="section_icon_attachment" type="text" />
                         </div>
                         <div class="form-field">
@@ -31,7 +29,7 @@ if(isset($_GET['action'])){
                                 <option value="All">All</option>
                                 <option value="Installation">Installation</option>
                                 <option value="Maintenance">Maintenance</option>
-                                <option value="Maintenance">None</option>
+                                <option value="None">None</option>
                             </select>
                         </div>
                     </div>
@@ -131,9 +129,10 @@ if(isset($_GET['action'])){
 
             if(isset($_GET['section_id'])){
 
-                $id = $_GET['section_id'];
+                // $id = $_GET['section_id'];
+                $id = absint($_GET['section_id']);
 
-                $get_data = myst_staff_training_get_specific_section_by_id($id);
+                $get_data = mystaff_training_staff_training_get_specific_section_by_id($id);
 
                 if(empty($get_data)){
 
@@ -167,7 +166,7 @@ if(isset($_GET['action'])){
 
             <?php
 
-            $img =  st_my_plugin_dir_folder.'/icons-camera.png';
+            $img =  mystaff_training_plugin_dir_folder.'/icons-camera.png';
 
             $learning_subsection = unserialize($get_data->learning_subsection);
 
@@ -227,11 +226,12 @@ if(isset($_GET['action'])){
 
                         </div>
                         <div class="form-field">
-                            <select name="section_cat" id="section_cat">
-                                <option value="All" <?php echo ($get_data->cat == 'All' ? 'selected' : ''); ?>>All</option>
-                                <option value="Installation" <?php echo ($get_data->cat == 'Installation' ? 'selected' : ''); ?>>Installation</option>
-                                <option value="Maintenance" <?php echo ($get_data->cat == 'Maintenance' ? 'selected' : ''); ?>>Maintenance</option>
-                            </select>
+                        <select name="section_cat" id="section_cat">
+    <option value="All" <?php echo esc_attr($get_data->cat == 'All' ? 'selected' : ''); ?>>All</option>
+    <option value="Installation" <?php echo esc_attr($get_data->cat == 'Installation' ? 'selected' : ''); ?>>Installation</option>
+    <option value="Maintenance" <?php echo esc_attr($get_data->cat == 'Maintenance' ? 'selected' : ''); ?>>Maintenance</option>
+    <option value="None" <?php echo ($get_data->cat == 'None' ? 'selected' : ''); ?>>None</option>
+</select>
                         </div>
 
                     </div>
@@ -240,23 +240,19 @@ if(isset($_GET['action'])){
 
                         <?php if(!empty($learning_subsection)){
 
-                            // foreach ($learning_subsection as $key => $item) {
-                            //     $total_question = 0;
-                            //     $title = $id.'_'.$item['sub_title'];
-                            //     $ql = $wpdb->get_row("SELECT * FROM {$table_name} WHERE sectionid = {$id} AND subsection_title = '$title' ", ARRAY_A);
-
-                                // $subtitle = explode("_",$ql['subsection_title']);
-
-                                // if($subtitle[1] == $item['sub_title']){
-                                //     $quizid = "&quizid=".$ql['quizid'];
-                                //     $total_question = count(json_decode($ql['question_list'],true));
-                                // }else{
-                                //     $quizid = '';
-                                // }
+                           
                                 foreach ($learning_subsection as $key => $item) {
     $total_question = 0;
     $title = $id . '_' . $item['sub_title'];
-    $ql = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}quiz_details WHERE sectionid = {$id} AND subsection_title = '$title' ", ARRAY_A);
+    // $ql = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}quiz_details WHERE sectionid = {$id} AND subsection_title = '$title' ", ARRAY_A);
+    $ql = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}quiz_details WHERE sectionid = %d AND subsection_title = %s",
+            $id,
+            $title
+        ),
+        ARRAY_A
+    );
 
     // Add a check to ensure that $ql['subsection_title'] is not null
     $subtitle = !empty($ql['subsection_title']) ? explode("_", $ql['subsection_title']) : null;
@@ -345,7 +341,7 @@ $selected_title = get_the_title(url_to_postid($selected_url));
                                             <a href="javascript:void(0)" onclick="deletethis(jQuery(this))">X</a>
 
                                         <?php } ?>
-                                        <a class="quiz-blue-btn" href="admin.php?page=quiz-section&section_id=<?php echo esc_attr($id); ?>&sub_sec_title=<?php echo urlencode($item['sub_title']); ?><?php echo $quizid; ?>">Quiz Section</a>
+                                        <a class="quiz-blue-btn" href="admin.php?page=quiz-section&section_id=<?php echo esc_attr($id); ?>&sub_sec_title=<?php echo esc_attr(urlencode($item['sub_title'])); ?><?php echo esc_attr($quizid); ?>">Quiz Section</a>
                                         <h5 class="tot-qu"><?php echo esc_html($total_question); ?></h5>
 
                                     </div>
@@ -392,7 +388,7 @@ $selected_title = get_the_title(url_to_postid($selected_url));
 
                 $id = $_GET['section_id'];
 
-                $get_data = myst_staff_training_get_specific_section_by_id($id);
+                $get_data = mystaff_training_staff_training_get_specific_section_by_id($id);
 
                 if(empty($get_data)){
 
@@ -444,7 +440,7 @@ $selected_title = get_the_title(url_to_postid($selected_url));
 
 
 
-                <?php echo myst_get_all_users($get_data);?>
+                <?php echo mystaff_training_get_all_users($get_data);?>
 
 
 
@@ -501,7 +497,7 @@ $selected_title = get_the_title(url_to_postid($selected_url));
         <a href="<?php echo admin_url('admin.php?page=learning_sections');?>&action=add">+ Add New Learning Section</a>
 
     </div>
-    <?php $learning_sections = myst_staff_training_get_learning_section();?>
+    <?php $learning_sections = mystaff_training_staff_training_get_learning_section();?>
 
     <div class="learning-sections-list">
 
@@ -516,7 +512,7 @@ $selected_title = get_the_title(url_to_postid($selected_url));
                         <div class="section-title"> </div>
                         <div class="section-action-btn"> <a></a><a></a></div>
                         <div class="section-total-assigned-users">
-                            <a class="assignedusers"><img src="<?php echo st_my_plugin_dir_folder.'/images/gradcap.png'; ?>" width="40px"></a>
+                        <a class="assignedusers" href="#"><img src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/images/gradcap.png'); ?>" width="40px"></a>
                             <a class="avgoftotal">Avg.</a>
 
                         </div>
@@ -564,7 +560,18 @@ $selected_title = get_the_title(url_to_postid($selected_url));
                                                         $completed_learning_modules[] = $value;
                                                         $completed += 1;
                                                         
-                                                        $score_sql = $wpdb->get_results("SELECT quizid,score FROM {$quiz_user} WHERE userid={$uid} and quizid IN (SELECT quizid FROM {$quiztable} WHERE sectionid={$value['id']}) ",ARRAY_A);
+                                                        // $score_sql = $wpdb->get_results("SELECT quizid,score FROM {$quiz_user} WHERE userid={$uid} and quizid IN (SELECT quizid FROM {$quiztable} WHERE sectionid={$value['id']}) ",ARRAY_A);
+                                                        $score_sql = $wpdb->get_results(
+                                                            $wpdb->prepare(
+                                                                "SELECT quizid, score FROM {$quiz_user} 
+                                                                 WHERE userid = %d AND quizid IN (
+                                                                     SELECT quizid FROM {$quiztable} WHERE sectionid = %d
+                                                                 )",
+                                                                $uid,
+                                                                $value['id']
+                                                            ),
+                                                            ARRAY_A
+                                                        );
                                                         //single user all subsection percentage average. 
                                                         foreach($score_sql as $row) {
                                                                             
@@ -753,7 +760,7 @@ submitHandler: function (form) {
             url: '<?php echo site_url(); ?>/wp-admin/admin-ajax.php',
             type: "POST",
             data: {
-                action: 'myst_learning_modules_save_action_backend',
+                action: 'mystaff_training_learning_modules_save_action_backend',
                 data: formData
             },
             success: function (data) {
@@ -890,7 +897,7 @@ jQuery.ajax({
 
     data: {
 
-        action: 'myst_staff_training_learning_modules_edit_action_backend',
+        action: 'mystaff_training_staff_training_learning_modules_edit_action_backend',
 
         data: formData,
 
@@ -1115,7 +1122,7 @@ return false;
 
                     data: {
 
-                        action: 'myst_staff_training_learning_modules_trash_action_backend',
+                        action: 'mystaff_training_staff_training_learning_modules_trash_action_backend',
 
                         section_id : id
 
@@ -1191,7 +1198,7 @@ jQuery.ajax({
 
     data: {
 
-        action: "myst_staff_training_learning_modules_assign_users",
+        action: "mystaff_training_staff_training_learning_modules_assign_users",
 
         section_id: section_id,
 
@@ -1332,7 +1339,7 @@ Swal.fire({
                 url: ajaxurl,
                 type: "POST",
                 data: {
-                    action: 'myst_staff_training_sort_learning_section',
+                    action: 'mystaff_training_staff_training_sort_learning_section',
                     sortingorder: order,
                 },
                 success: function (data) {

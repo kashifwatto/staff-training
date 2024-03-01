@@ -52,17 +52,7 @@ global $wpdb;
     } ?>
 </div>
 
-<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.4.4/sweetalert2.min.css" integrity="sha512-y4S4cBeErz9ykN3iwUC4kmP/Ca+zd8n8FDzlVbq5Nr73gn1VBXZhpriQ7avR+8fQLpyq4izWm0b8s6q4Vedb9w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.4.4/sweetalert2.all.js" integrity="sha512-aYkxNMS1BrFK2pwC53ea1bO8key+6qLChadZfRk8FtHt36OBqoKX8cnkcYWLs1BR5sqgjU5SMIMYNa85lZWzAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.4.4/sweetalert2.min.js" integrity="sha512-vDRRSInpSrdiN5LfDsexCr56x9mAO3WrKn8ZpIM77alA24mAH3DYkGVSIq0mT5coyfgOlTbFyBSUG7tjqdNkNw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"> </script>
 
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/select/1.6.2/js/dataTables.select.min.js"></script>
-<script src="<?php // echo get_stylesheet_directory_uri(); ?>/js/editor.dataTables.editor.min.js"></script> -->
 
 <script>
     jQuery(document).ready(function($){
@@ -71,12 +61,7 @@ global $wpdb;
             searching:false,
             paging:false,
             bInfo:false,
-            //order: [[1, 'desc']],
-            //paging: false,
-            // columnDefs: [{
-            //     orderable: false,
-            //     targets: "no-sort"
-            // }]
+
         });
        
         $('#users_table').on('click','.update-userpoints',function(e){
@@ -100,7 +85,7 @@ global $wpdb;
                 url: '<?php echo esc_url(site_url('/wp-admin/admin-ajax.php')); ?>',
                 type: "POST",
                 data: {
-                    action: 'myst_staff_training_modify_user_wallet_points',
+                    action: 'mystaff_training_staff_training_modify_user_wallet_points',
                     user_id : $(this).parents('td').attr('data-userid'),
                     points : elem.val(),
                 },
@@ -118,7 +103,6 @@ global $wpdb;
                         });
                         frm_elem.siblings('span').text(res.updated_points).show();
                         frm_elem.hide();
-                        // window.location.href = '<?php //echo admin_url('admin.php?page=shop-items'); ?>';
                             
                     }
                 }

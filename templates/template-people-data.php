@@ -2,9 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 } 
-if (!defined('st_my_plugin_dir_folder')) {
-    define('st_my_plugin_dir_folder', plugin_dir_url(__File__));
-}
+
 //quiz_details, quiz_user_details, learning_sections
 global $wpdb;
 $table_name = $wpdb->prefix . 'quiz_details';
@@ -79,7 +77,7 @@ foreach ($q1 as $key => $value) {
     <div class="people-list">
         <ul>
             <?php foreach ($sp as $key => $value) {                
-                $display_name = myst_staff_training_get_display_name($key);
+                $display_name = mystaff_training_staff_training_get_display_name($key);
                 $name =  $display_name;   
                 $user_id = $key;  
                 
@@ -140,7 +138,7 @@ foreach ($q1 as $key => $value) {
                                 //$allsection_array = wp_list_sort( $allsection_array, 'score', 'ASC');
                                 asort($allsection_array);
                                 
-                                echo popupfunction('all', $allsection_array ,$user_id,$name); 
+                                echo mystaff_training_new_popupfunction('all', $allsection_array ,$user_id,$name); 
                                
                                 // $allsection_array = array();
                                 //  foreach($value as $sid => $sval) {  
@@ -152,7 +150,7 @@ foreach ($q1 as $key => $value) {
                                 //     $allsection_array[$sid] = round($t_quiz_score);
                                 // }
                                 // asort( $allsection_array );
-                                // echo popupfunction('all', $allsection_array ,$user_id,$name); 
+                                // echo mystaff_training_new_popupfunction('all', $allsection_array ,$user_id,$name); 
                             
                             ?> 
                         </div>     
@@ -211,37 +209,36 @@ foreach ($q1 as $key => $value) {
                         <?php if($gold > 0) : ?>
                             <div class="pro-percentage"> 
                                 <a class="scoreinfo" data-toggle="modal" data-target="#myModal-gold-<?php echo esc_attr($user_id); ?>">
-                                    <img src="<?php echo st_my_plugin_dir_folder.'/images/trophygold.png'; ?>" width="25px;"/>
+                                <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/images/trophygold.png'); ?>" width="25px;"/>
                                     <p><?php echo esc_html($gold); ?></p>
                                 </a>
-                                <?php echo popupfunction('gold',$g_arr,$user_id,$name); ?>
+                                <?php echo mystaff_training_new_popupfunction('gold',$g_arr,$user_id,$name); ?>
                             </div>         
                         <?php endif; ?>
                         <?php if($silver > 0) : ?>
                             <div class="pro-percentage">
                                 <a class="scoreinfo" data-toggle="modal" data-target="#myModal-silver-<?php echo esc_attr($user_id); ?>">
-                                    <img src="<?php echo st_my_plugin_dir_folder.'/images/trophysilver.png'; ?>" width="25px;"/>
-                                    <p><?php echo esc_html($silver); ?></p>
+                                <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/images/trophysilver.png'); ?>" width="25px;"/>                                    <p><?php echo esc_html($silver); ?></p>
                                 </a>
-                                <?php echo popupfunction('silver',$s_arr,$user_id,$name); ?>
+                                <?php echo mystaff_training_new_popupfunction('silver',$s_arr,$user_id,$name); ?>
                             </div>         
                         <?php endif; ?> 
                         <?php if($bronze > 0) : ?>
                             <div class="pro-percentage">    
                                 <a class="scoreinfo" data-toggle="modal" data-target="#myModal-bronze-<?php echo esc_attr($user_id); ?>">
-                                    <img src="<?php echo st_my_plugin_dir_folder.'/images/trophybronze.png'; ?>" width="25px;"/>
+                                <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/images/trophybronze.png'); ?>" width="25px;"/>
                                     <p><?php echo esc_html($bronze); ?></p>
                                 </a>
-                                <?php echo popupfunction('bronze',$b_arr,$user_id,$name); ?>
+                                <?php echo mystaff_training_new_popupfunction('bronze',$b_arr,$user_id,$name); ?>
                             </div>         
                         <?php endif; ?>
                         <?php if($fail > 0) : ?>
                             <div class="pro-percentage">    
                                 <a class="scoreinfo" data-toggle="modal" data-target="#myModal-fail-<?php echo esc_attr($user_id); ?>">
-                                    <img src="<?php echo st_my_plugin_dir_folder.'/images/trophyx.png'; ?>" width="25px;"/>
+                                <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/images/trophyx.png'); ?>" width="25px;"/>
                                     <p><?php echo esc_html($fail); ?></p>
                                 </a>
-                                <?php echo popupfunction('fail',$f_arr,$user_id,$name); ?>
+                                <?php echo mystaff_training_new_popupfunction('fail',$f_arr,$user_id,$name); ?>
                             </div>         
                         <?php endif; ?>
                     </div>  
@@ -278,7 +275,7 @@ foreach ($q1 as $key => $value) {
                     type: 'post',
                     
                     data: {
-                        action: "myst_staff_training_update_user_cat",
+                        action: "mystaff_training_staff_training_update_user_cat",
                         cat_value: cat_value,
                         user_id: user_id,
                     },
@@ -306,7 +303,7 @@ foreach ($q1 as $key => $value) {
   
   
 <?php 
-function popupfunction($string, $trophy_arr, $userid, $name){
+function mystaff_training_new_popupfunction($string, $trophy_arr, $userid, $name){
     ?>
     <div class="modal fade" id="myModal-<?php echo esc_attr($string.'-'.$userid); ?>" role="dialog">
         <div class="modal-dialog">                            
@@ -324,13 +321,13 @@ function popupfunction($string, $trophy_arr, $userid, $name){
                         
                         foreach($trophy_arr as $id => $val) {    
                                                
-                            $detail = myst_staff_training_get_specific_section_by_id($id);
+                            $detail = mystaff_training_staff_training_get_specific_section_by_id($id);
                             if($detail) { ?>
                             <li class="cc-list">
                                 <!-- <div class="acc-wrapper">
                                     <h3 class="accordion"><?php echo esc_html($detail->title);?></h3>
                                     <div class="panel">
-                                        <?php //echo myst_get_wrong_answer_list($userid,$id); ?>
+                                        <?php //echo mystaff_training_get_wrong_answer_list($userid,$id); ?>
 
                                     </div>
                                 </div> -->
@@ -362,12 +359,12 @@ function popupfunction($string, $trophy_arr, $userid, $name){
                                 
                                 }else{
                                     echo '<span>'.esc_html($val).'</span>';
-                                    //echo myst_get_wrong_answer_list($userid,$id);
+                                    //echo mystaff_training_get_wrong_answer_list($userid,$id);
                                 }
                                     
                                 ?>
                                <div class="acc-content">
-                                  <?php echo myst_get_wrong_answer_list($userid,$id); ?>
+                                  <?php echo mystaff_training_get_wrong_answer_list($userid,$id); ?>
                                </div>
                             </li>
                             <?php

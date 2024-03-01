@@ -9,9 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <?php 
 get_header();
-if (!defined('st_my_plugin_dir_folder')) {
-    define('st_my_plugin_dir_folder', plugin_dir_url(__File__));
-}
+
 global $wpdb;
 if ( !is_user_logged_in() ) {
     wp_redirect( site_url().'/wp-admin');
@@ -29,7 +27,7 @@ $learning_modules = get_user_meta( $user_id , 'learning_modules_progress', true)
 $flag_unassigned=true;
 
 if(empty($learning_modules)){
-    $learning_sections = myst_staff_training_get_learning_section();
+    $learning_sections = mystaff_training_staff_training_get_learning_section();
 
     $user_assigned_section = array();
 
@@ -117,7 +115,7 @@ if(empty($learning_modules)){
 
 ///////////////////////////////////////////////////
 if(true){
-    $learning_sections = myst_staff_training_get_learning_section();
+    $learning_sections = mystaff_training_staff_training_get_learning_section();
 
     $user_unassigned_section = array();
     
@@ -249,7 +247,7 @@ if(true){
                             
                             $sortingarr = array();
                                             foreach ($sp as $lbk => $lbv) {               
-                                                $display_name = myst_staff_training_get_display_name($lbk);
+                                                $display_name = mystaff_training_staff_training_get_display_name($lbk);
                                                 $name =  $display_name;
                                                 $weight_arr = 0;
                                                 $gs = get_option('gold_score_min');
@@ -302,10 +300,7 @@ if(true){
                                                             
                                                         endif; 
                                                     }
-                                                        /* $getweightofuser = $wpdb->get_results("SELECT * FROM {$quiz_section_score} WHERE userid={$lbk} AND sectionid={$sid}",ARRAY_A);
-                                                        foreach($getweightofuser as $wght){
-                                                            $weight_arr += $wght['score_weight'];
-                                                        } */
+                                                       
                                                 }
                                                 $sortingarr[] = array('name' => $name, 'score' => $weight_arr);
                                             }
@@ -465,14 +460,14 @@ if(true){
                         </g>
                     </svg>
                     </span>
-                    <!-- <img src="<?php //echo st_my_plugin_dir_folder.'/images/logout.png'; ?>" /> -->
+                    <!-- <img src="<?php //echo mystaff_training_plugin_dir_folder.'/images/logout.png'; ?>" /> -->
                 </a>
             </div>
 
             <div class="custom-site-logo">
             
                 <?php
-                myst_staff_training_get_custom_logo_function();
+                mystaff_training_staff_training_get_custom_logo_function();
                 ?>
 
             </div>
@@ -510,7 +505,14 @@ if(true){
                         
                         $score_data = json_decode($row['score'],true);
                         $score_arr[] = $score_data['percentage'];
-                        $score_sql_row = $wpdb->get_row("SELECT subsection_title from {$wpdb->prefix}quiz_details where quizid = {$row['quizid']}",ARRAY_A);
+                        // $score_sql_row = $wpdb->get_row("SELECT subsection_title from {$wpdb->prefix}quiz_details where quizid = {$row['quizid']}",ARRAY_A);
+                        $score_sql_row = $wpdb->get_row(
+                            $wpdb->prepare(
+                                "SELECT subsection_title FROM {$wpdb->prefix}quiz_details WHERE quizid = %d",
+                                $row['quizid']
+                            ),
+                            ARRAY_A
+                        );
                         $subsectitle = explode("_",$score_sql_row['subsection_title'])[1];
                         $score_quizarr[$subsectitle] = $score_data['percentage'];
                     }
@@ -531,7 +533,7 @@ if(true){
                         elseif($quiz_score >= get_option('fail_score_min') && $quiz_score <= (get_option('bronze_score_min') - 1)):
                             $cls = 'trophyx.png';
                         endif;
-                        $average = '<img src="'.st_my_plugin_dir_folder.'/images/'.$cls.'"/>';
+                        $average = '<img src="'.mystaff_training_plugin_dir_folder.'/images/'.$cls.'"/>';
                     }else{
                         $average = '';
                     }
@@ -567,7 +569,7 @@ if(true){
 
                                     <h3><?php echo esc_html($value['title']);?></h3>
 
-                                    <?php echo myst_get_current_steps($value);?>
+                                    <?php echo mystaff_training_get_current_steps($value);?>
 
                                 </div>
 
@@ -622,9 +624,9 @@ if(true){
 
                             <?php 
                             if($avg == ''){
-                                echo myst_get_progress_bar($total_steps, $total_completed_step );
+                                echo mystaff_training_get_progress_bar($total_steps, $total_completed_step );
                             }else{
-                                echo myst_get_quiz_progress_bar($avg);
+                                echo mystaff_training_get_quiz_progress_bar($avg);
                             } 
                             ?>
                         </div>
@@ -639,7 +641,7 @@ if(true){
             <div class="overlay-bg">
             </div>
             <?php  //if(current_user_can( 'administrator' )) {  
-                $wallet_balance = myst_staff_training_coin_shopping_get_wallet_balance($user_id);
+                $wallet_balance = mystaff_training_staff_training_coin_shopping_get_wallet_balance($user_id);
                 ?>
             <div class="overlay-content popup" id="atlshopmodal" tabindex="-1" role="dialog" aria-labelledby="atlshopmodalLabel" aria-hidden="true" style="display:none;">
                 <div class="modal-dialog atl-sel-prod" role="document">
@@ -676,7 +678,7 @@ if(true){
                                             <a href="javascript:void(0);" data-pid="<?php echo esc_attr($plist['id']); ?>" data-price="<?php echo esc_attr($plist['product_price']);?>" class="add-to-cart <?php echo esc_html($disabled); ?>"><?php echo esc_html($text); ?></a>
                                         </div>
                                         <div class="shop-loader">
-                                            <img src="<?php echo st_my_plugin_dir_folder.'/templates/loading.gif'; ?>" height="30px" width="30px">
+                                        <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/templates/loading.gif'); ?>" height="30px" width="30px">
                                         </div>
                                     </li>
                                     
@@ -694,7 +696,7 @@ if(true){
             <?php //} ?>
             <div class="shop-button">
                 <?php //if(current_user_can( 'administrator' )) {
-                    $wallet_balance = myst_staff_training_coin_shopping_get_wallet_balance($user_id);
+                    $wallet_balance = mystaff_training_staff_training_coin_shopping_get_wallet_balance($user_id);
                     $wallet_balance = !empty($wallet_balance) ? $wallet_balance : 0;
                 ?>
                     <button class="btn btn-shop" data-toggle="modal" data-target="#atlshopmodal">Shop <?php echo esc_html($wallet_balance).'pts'; ?></button>
@@ -751,7 +753,7 @@ if(true){
                                 <?php 
                                     $sortingarr = array();
                                             foreach ($sp as $lbk => $lbv) {               
-                                                $display_name = myst_staff_training_get_display_name($lbk);
+                                                $display_name = mystaff_training_staff_training_get_display_name($lbk);
                                                 $name =  $display_name;
                                                 $weight_arr = 0;
                                                 $gs = get_option('gold_score_min');
@@ -862,20 +864,21 @@ if(true){
                                     </h4>
                                     
                                     <small style="font-size:12px;margin-left:15px">
-                                    <?php
- if($leaguesEnabled=='y'){
-    if($myLeague==1){
-        echo "To enter the ".$league2Title.", score ".$league2Score." or more.";
-    }else if($myLeague==2){
-        echo "To enter the ".$league3Title.", score ".$league3Score." or more.";
-    }else if($myLeague==3){
-        echo "Well done! You are now in the ".$league3_title.".";
-    }else{
-        echo "To enter the ".$league1Title.", score ".$league1Score." or more.";
-    }                                           
-}
-                                    ?>
-                                    </small>
+    <?php
+    if ($leaguesEnabled == 'y') {
+        if ($myLeague == 1) {
+            echo esc_html("To enter the " . $league2Title . ", score " . $league2Score . " or more.");
+        } else if ($myLeague == 2) {
+            echo esc_html("To enter the " . $league3Title . ", score " . $league3Score . " or more.");
+        } else if ($myLeague == 3) {
+            echo esc_html("Well done! You are now in the " . $league3_title . ".");
+        } else {
+            echo esc_html("To enter the " . $league1Title . ", score " . $league1Score . " or more.");
+        }
+    }
+    ?>
+</small>
+
                                 </div>
                                 <table class="table cell-border" id="lbscore" cellspacing="0">
                                     <thead>
@@ -1027,7 +1030,7 @@ if(true){
                                             
                                             if(!empty($user_assigned['image_icon'])){                                   
 
-                                                echo '<img src="'.$user_assigned['image_icon'].'"/>';
+                                                echo '<img src="' . esc_url($user_assigned['image_icon']) . '"/>';
 
                                             } ?>
 
@@ -1035,7 +1038,7 @@ if(true){
 
                                         <h3><?php echo esc_html($user_assigned['title']);?></h3>
 
-                                        <?php echo myst_get_current_steps($user_assigned);?>
+                                        <?php echo mystaff_training_get_current_steps($user_assigned);?>
 
                                     </div>
 
@@ -1079,7 +1082,7 @@ if(true){
 
                                 </div>
 
-                                <?php echo myst_get_progress_bar($total_steps, $total_completed_step ); ?>
+                                <?php echo mystaff_training_get_progress_bar($total_steps, $total_completed_step ); ?>
 
                             </div>
 
@@ -1107,7 +1110,7 @@ if(true){
                              
                     foreach ($learning_modules_unassigned as $key => $user_assigned) {
                         
-                        if(get_option('if_self_assign')!='y'){
+                        if(get_option('if_self_assign')!='y' ||$user_assigned['cat']=="None"){
                             continue;
                         }
                              
@@ -1121,17 +1124,16 @@ if(true){
                                     <div class="img-wrapper">
                                         <?php
                                         if(!empty($user_assigned['image_icon'])){
-                                            echo '<img src="'.$user_assigned['image_icon'].'"/>';
-                                        } ?>
+                                            echo '<img src="' . esc_url($user_assigned['image_icon']) . '"/>';                                        } ?>
                                     </div>
-                                    <h3><?php echo $user_assigned['title'] ;?></h3>
+                                    <h3><?php echo esc_html($user_assigned['title']); ?></h3>
                                 </div>
                                 <div class="learning-modules-content">
                                     <ul>
                                         <?php
                                         if(!empty($user_assigned['pages'])){
                                             foreach ($user_assigned['pages'] as $key2 => $learning_subsec) {
-                                                echo '<li><a>'.$learning_subsec['sub_title'].'</a></li>';
+                                                echo '<li><a>' . esc_html($learning_subsec['sub_title']) . '</a></li>';
                                             }
                                         }
                                         ?>
@@ -1144,7 +1146,7 @@ if(true){
                             <!--<button class="btn " id="selfAssignButton" data-section-id="52" style="height:40px; padding: 10px 20px; font-size: 16px; font-weight:400">Self Assign</button>-->
                             <button
                             class="btn selfAssignButton" data-section-id="<?php 
-                            echo $sectionId;
+                           echo esc_attr($sectionId); 
                             ?>" 
                             style="height:40px; padding: 10px 20px; font-size: 16px; font-weight:400 "
                             <?php echo $allowSelfAssign ? '' : 'disabled'; ?>
@@ -1153,7 +1155,7 @@ if(true){
                             if($allowSelfAssign){
                               echo   "Self Assign";
                             }else{
-                                echo     "Wait for ". ($daysWait-$daysDifference)." days";
+                                echo esc_html("Wait for " . ($daysWait - $daysDifference) . " days");
                             }
                             ?>
                             </button>
@@ -1231,7 +1233,7 @@ if(true){
         var section_id = sectionId; //Slab Course
 
 
-
+console.log(user_ids);
         
         jQuery.ajax({
 
@@ -1241,7 +1243,7 @@ if(true){
 
             data: {
 
-                action: "myst_staff_training_learning_modules_assign_users",
+                action: "mystaff_training_staff_training_learning_modules_assign_users",
 
                 section_id: section_id,
 

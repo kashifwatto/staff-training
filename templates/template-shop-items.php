@@ -3,15 +3,13 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 global $wpdb;
-if (!defined('st_my_plugin_dir_folder')) {
-    define('st_my_plugin_dir_folder', plugin_dir_url(__File__));
-}
+
 if (isset($_GET['action'])) {
     if ($_GET['action'] == 'add') {
         ?>
         <div class="products-top-header">
         <a href="<?php echo esc_url(admin_url('admin.php?page=shop-items')); ?>">
-                <img src="<?php echo st_my_plugin_dir_folder?>/images/back.png">
+        <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/images/back.png'); ?>" />
             </a>
             <h1>Add Product</h1>
         </div>
@@ -20,7 +18,7 @@ if (isset($_GET['action'])) {
                 <form action="" method="" id="add_product_form" name="add_product_form">
                     <div class="top-section-details">
                         <div class="section_upload_icon">
-                            <label for="prod_icon"><img width="50px" src="<?php echo st_my_plugin_dir_folder?>/icons-camera.png"/></label>
+                        <label for="prod_icon"><img width="50px" src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/icons-camera.png'); ?>"/></label>
                             <input id="prod_icon" name="prod_icon_attachment" type="hidden" />
                         </div>
                         <div class="form-field">
@@ -42,9 +40,16 @@ if (isset($_GET['action'])) {
         </div>
         <?php
     } elseif ($_GET['action'] == 'edit') { 
-        $pid = $_GET['pid'];
+        $pid = sanitize_text_field($_GET['pid']);
          //echo "SELECT * FROM {$wpdb->prefix}atl_products WHERE id = {$pid}";
-        $results = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}atl_products WHERE id = {$pid}",ARRAY_A);
+        // $results = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}atl_products WHERE id = {$pid}",ARRAY_A);
+        $results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM {$wpdb->prefix}atl_products WHERE id = %d",
+                $pid
+            ),
+            ARRAY_A
+        );
         
         if(empty($results)) {
             wp_redirect( admin_url('admin.php?page=shop-items&message=notfound'));
@@ -53,11 +58,11 @@ if (isset($_GET['action'])) {
         if($results[0]['image_icon'] != '') {
             $img = wp_get_attachment_image_src( $results[0]['image_icon'] )[0];
         }else{
-            $img = st_my_plugin_dir_folder.'/icons-camera.png';
+            $img = mystaff_training_plugin_dir_folder.'/icons-camera.png';
         }
         ?>
         <div class="products-top-header">
-        <a href="<?php echo esc_url(admin_url('admin.php?page=shop-items')); ?>"><img src="<?php echo esc_url(st_my_plugin_dir_folder . '/images/back.png'); ?>"></a>
+        <a href="<?php echo esc_url(admin_url('admin.php?page=shop-items')); ?>"><img src="<?php echo esc_url(mystaff_training_plugin_dir_folder . '/images/back.png'); ?>"></a>
             <h1>Edit Product</h1>
         </div>
         <div class="atl-product-wrapper">
@@ -216,7 +221,7 @@ if (isset($_GET['action'])) {
                     url: '<?php echo esc_url(admin_url('admin-ajax.php')); ?>',
                     type: "POST",
                     data: {
-                        action: 'myst_staff_training_insert_product_shop_items',
+                        action: 'mystaff_training_staff_training_insert_product_shop_items',
                         status: 'add',
                         data: formData
                     },
@@ -268,7 +273,7 @@ if (isset($_GET['action'])) {
                     url: '<?php echo esc_url(admin_url('admin-ajax.php')); ?>',
                     type: "POST",
                     data: {
-                        action: 'myst_staff_training_insert_product_shop_items',
+                        action: 'mystaff_training_staff_training_insert_product_shop_items',
                         status: 'update',
                         data: formData
                     },
@@ -311,7 +316,7 @@ if (isset($_GET['action'])) {
 
                         type: "POST",
                         data: {
-                            action: 'myst_staff_training_delete_product_shop_items',
+                            action: 'mystaff_training_staff_training_delete_product_shop_items',
                             product_id : id
                         },
                         success: function(data) {

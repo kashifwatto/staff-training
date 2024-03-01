@@ -2,9 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
-if (!defined('st_my_plugin_dir_folder')) {
-    define('st_my_plugin_dir_folder', plugin_dir_url(__File__));
-}
+
 //quiz_details, quiz_user_details, learning_sections
 global $wpdb;
 $table_name = $wpdb->prefix . 'quiz_details';
@@ -51,7 +49,7 @@ foreach ($q1 as $key => $value) {
 
                 <?php 
                 foreach ($sp as $key => $value) {               
-                    $display_name = myst_staff_training_get_display_name($key);
+                    $display_name = mystaff_training_staff_training_get_display_name($key);
                     $name =  $display_name;   
                     $user_id = $key; 
                     
@@ -146,7 +144,7 @@ foreach ($q1 as $key => $value) {
                         <td>
                             <div class="pro-percentage">
                                 <?php if($gold > 0) : ?>
-                                    <img src="<?php echo st_my_plugin_dir_folder.'/images/trophygold.png'; ?>" width="25px;"/>
+                                    <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/images/trophygold.png'); ?>" width="25px;"/>
                                     <p><?php echo esc_html($gold); ?></p>
                                 <?php endif; ?>
                             </div> 
@@ -154,7 +152,7 @@ foreach ($q1 as $key => $value) {
                         <td>
                             <div class="pro-percentage">
                                 <?php if($silver > 0) : ?>
-                                    <img src="<?php echo st_my_plugin_dir_folder.'/images/trophysilver.png'; ?>" width="25px;"/>
+                                    <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/images/trophysilver.png'); ?>" width="25px;"/>
                                     <p><?php echo esc_html($silver); ?></p>
                                 <?php endif; ?> 
                             </div>
@@ -162,7 +160,7 @@ foreach ($q1 as $key => $value) {
                         <td>
                             <div class="pro-percentage">
                                 <?php if($bronze > 0) : ?>
-                                    <img src="<?php echo st_my_plugin_dir_folder.'/images/trophybronze.png'; ?>" width="25px;"/>
+                                    <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/images/trophybronze.png'); ?>" width="25px;"/>
                                     <p><?php echo esc_html($bronze); ?></p>
                                 <?php endif; ?>
                             </div>  
@@ -170,7 +168,7 @@ foreach ($q1 as $key => $value) {
                         <td>
                             <div class="pro-percentage">
                                 <?php if($fail > 0) : ?>
-                                    <img src="<?php echo st_my_plugin_dir_folder.'/images/trophyx.png'; ?>" width="25px;"/>
+                                    <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/images/trophyx.png'); ?>" width="25px;"/>
                                     <p><?php echo esc_html($fail); ?></p>
                                 <?php endif; ?>
                             </div>

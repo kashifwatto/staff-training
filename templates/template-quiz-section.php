@@ -3,9 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
-if (!defined('st_my_plugin_dir_folder')) {
-    define('st_my_plugin_dir_folder', plugin_dir_url(__File__));
-} 
+
 ?>
 
 <div class="wrapper">
@@ -14,26 +12,33 @@ if (!defined('st_my_plugin_dir_folder')) {
     global $wpdb;
     
     $table_name = $wpdb->prefix . 'quiz_details';
-    // $list = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}quiz_details WHERE quizid = {$_GET['quizid']}");
     if (isset($_GET['quizid'])) {
         $quizid = intval($_GET['quizid']);
-        $list = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}quiz_details WHERE quizid = {$quizid}");
+        // $list = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}quiz_details WHERE quizid = {$quizid}");
+        $list = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM {$wpdb->prefix}quiz_details WHERE quizid = %d",
+                $quizid
+            )
+        );
        
     }
     if (!empty($list) && isset($list[0])) {
         $Questions = json_decode($list[0]->question_list, true);
         // Rest of your code
-    } 
-    ?>
+    }else{
+        $Questions=null;   
+    }
+        ?>
     <div class="title-wrap">
         <div class="backto-wrap">
-        <a href="<?php echo esc_url(admin_url('admin.php') . '?page=learning_sections&action=edit&section_id=' . esc_attr($_GET['section_id'])); ?>" title="Back to Learning section" class="backtolearning">
-                <img src="<?php echo st_my_plugin_dir_folder.'/images/back.png'; ?>" />
+        <a href="<?php echo esc_url(admin_url('admin.php') . '?page=learning_sections&action=edit&section_id=' . esc_attr(sanitize_text_field($_GET['section_id']))); ?>" title="Back to Learning section" class="backtolearning">
+        <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/images/back.png'); ?>" />
             </a>
-            <h1><?php echo $_GET['sub_sec_title']; ?> Quiz</h1> 
+            <h1><?php echo esc_html(sanitize_text_field( $_GET['sub_sec_title'] )) ?> Quiz</h1> 
         </div><!-- .backto-wrap -->
         <?php if(!empty($list)) : ?>
-            <button class="btn  delete-quiz" data-quizid="<?php echo $_GET['quizid']; ?>" title="Delete Quiz"><span class="dashicons dashicons-trash"></span></button>
+            <button class="btn  delete-quiz" data-quizid="<?php echo esc_attr(sanitize_text_field($_GET['quizid'])); ?>" title="Delete Quiz"><span class="dashicons dashicons-trash"></span></button>
         <?php endif; ?>
         
     </div>
@@ -55,10 +60,10 @@ if (!is_null($quizid)) {
                 <div class="ques-data">
                     <div class="ques-sr">
                         <span class="dashicons dashicons-edit"></span>
-                        <span class="question-no"><?php echo $key.'. '; ?></span>
+                        <span class="question-no"><?php echo esc_html($key.'. '); ?></span>
                     </div>
-                    <input type="text" placeholder="Enter Question" name="ques_title[]" id="ques_title_<?php echo $key; ?>" value="<?php echo $data['Question']; ?>" class="ques-title-input" readonly/>
-                    <label class="ques-lbl"><?php echo $data['Question']; ?></label>
+                    <input type="text" placeholder="Enter Question" name="ques_title[]" id="ques_title_<?php echo esc_attr($key); ?>" value="<?php echo esc_attr($data['Question']); ?>" class="ques-title-input" readonly/>
+                    <label class="ques-lbl"><?php echo esc_html($data['Question']); ?></label>
                     <span class="error ques-error"></span>
                 </div>
                 
@@ -74,18 +79,18 @@ if (!is_null($quizid)) {
                         }
                     ?>
                     
-                        <div class="ans-list">
-                            <div class="ans-data">
-                                <input type="checkbox" name="quiz_answer[]" id="quiz_answer_<?php echo $k; ?>" <?php echo $selected; ?> />
-                                <label for="quiz_answer_<?php echo $k; ?>" name="answerlabel"><?php echo $ans; ?></label>
-                                <input type="text" placeholder="Enter Answer" value="<?php echo $ans; ?>" name="answer_input[]" id="answer_input_<?php echo $k; ?>" class="answer-input" />
-                                <span class="error ans-error"></span>
-                            </div>
-                            <div class="action">
-                                <a href="javascript:void(0);" class="ans-del" data-key="<?php echo esc_attr($k); ?>" data-ques="<?php echo esc_attr($key); ?>"><span class="dashicons dashicons-trash"></span></a>
-                                <a href="javascript:void(0);" class="ans-edit"><span class="dashicons dashicons-edit"></span></a>
-                            </div>
-                        </div>
+                    <div class="ans-list">
+    <div class="ans-data">
+        <input type="checkbox" name="quiz_answer[]" id="quiz_answer_<?php echo esc_attr($k); ?>" <?php echo esc_attr($selected); ?> />
+        <label for="quiz_answer_<?php echo esc_attr($k); ?>" name="answerlabel"><?php echo esc_html($ans); ?></label>
+        <input type="text" placeholder="Enter Answer" value="<?php echo esc_attr($ans); ?>" name="answer_input[]" id="answer_input_<?php echo esc_attr($k); ?>" class="answer-input" />
+        <span class="error ans-error"></span>
+    </div>
+    <div class="action">
+        <a href="javascript:void(0);" class="ans-del" data-key="<?php echo esc_attr($k); ?>" data-ques="<?php echo esc_attr($key); ?>"><span class="dashicons dashicons-trash"></span></a>
+        <a href="javascript:void(0);" class="ans-edit"><span class="dashicons dashicons-edit"></span></a>
+    </div>
+</div>
                         <?php 
                     }
                     ?>
@@ -100,7 +105,7 @@ if (!is_null($quizid)) {
                         <input type="button" name="del_ques" value="Delete" class="ques-del-btn" data-quesid="<?php echo esc_attr($key); ?>" >
                         <a href="javascript:void(0);" onclick="location.reload();">Cancel</a>
                         <div class="loader" style="display:none;">
-                            <img class="ajax-loader" src="<?php echo st_my_plugin_dir_folder  .'/templates/loading.gif'; ?>" />
+                        <img class="ajax-loader" src="<?php echo esc_url(mystaff_training_plugin_dir_folder . '/templates/loading.gif'); ?>" />
                         </div>
                     </div>
 
@@ -175,7 +180,7 @@ if (!is_null($quizid)) {
             var numItems = jQuery('.que-item').length;
             numItems = numItems + 1;
 
-            var fields = '<div class="que-item"><div class="ques-data"><div class="ques-sr"><span class="dashicons dashicons-edit"></span><span class="question-no">'+numItems+'. </span></div><input type="text" placeholder="Enter Question" name="ques_title[]" id="ques_title_'+numItems+'" value="" class="ques-title-input" /><span class="error ques-error"></span></div><div class="question-form" style="display:block;"><div class="answer-wrap"></div><span class="error anslist-error"></span><div class="new-ans-add"><a href="#" class="">+ Add Answer</a></div><div class="section-action-btn"><input type="button" name="save_ques" id="save_ques" value="save" class="ques-save-btn"><a href="javascript:void(0);" class="" onclick="location.reload();">Cancel</a><div class="loader" style="display:none;"><img class="ajax-loader" src="<?php echo st_my_plugin_dir_folder.'/templates/loading.gif'; ?>" /></div></div></div></div>';
+            var fields = '<div class="que-item"><div class="ques-data"><div class="ques-sr"><span class="dashicons dashicons-edit"></span><span class="question-no">'+numItems+'. </span></div><input type="text" placeholder="Enter Question" name="ques_title[]" id="ques_title_'+numItems+'" value="" class="ques-title-input" /><span class="error ques-error"></span></div><div class="question-form" style="display:block;"><div class="answer-wrap"></div><span class="error anslist-error"></span><div class="new-ans-add"><a href="#" class="">+ Add Answer</a></div><div class="section-action-btn"><input type="button" name="save_ques" id="save_ques" value="save" class="ques-save-btn"><a href="javascript:void(0);" class="" onclick="location.reload();">Cancel</a><div class="loader" style="display:none;"><img class="ajax-loader" src="<?php echo mystaff_training_plugin_dir_folder.'/templates/loading.gif'; ?>" /></div></div></div></div>';
 
             jQuery('.question-list').append(fields);
             
@@ -243,13 +248,14 @@ if (!is_null($quizid)) {
                     }
                 }).get();
                 var quizid = jQuery('input[name="quizid"]').val();
+                console.log(answertitle);
                 jQuery.ajax({
                     url: '<?php echo esc_url(admin_url('admin-ajax.php')); ?>',
                     type: "POST",
                     data: {
-                        'action': 'myst_staff_training_save_question_answers_module',
-                        'sectionid': '<?php echo $_GET['section_id']; ?>',
-'subtitle': '<?php echo $_GET['sub_sec_title']; ?>',
+                        'action': 'mystaff_training_staff_training_save_question_answers_module',
+                        'sectionid': '<?php echo esc_js( sanitize_text_field( $_GET['section_id'] ) ) ?>',
+                        'subtitle': '<?php echo esc_js( sanitize_text_field( $_GET['sub_sec_title'] ) ); ?>',
 
                         'questitle': questitle,
                         'quesid': quesid,
@@ -262,6 +268,7 @@ if (!is_null($quizid)) {
                         btn.addClass('overlay');
                     },
                     success: function(data) {
+                      
                         jQuery(".loader").hide();
                         btn.removeClass('overlay');
                         var resp = jQuery.parseJSON(data);
@@ -316,12 +323,12 @@ if (!is_null($quizid)) {
 
                         data: { 
 
-                            action: 'myst_staff_training_quiz_module_delete_answer_backend', 
+                            action: 'mystaff_training_staff_training_quiz_module_delete_answer_backend', 
                             quesid: quesid,
                             answerid : answerid,
                             quizid: quizid,
-                            sectionid: '<?php echo esc_js($_GET['section_id']); ?>',
-                            subsectiontitle: '<?php echo esc_js($_GET['sub_sec_title']); ?>',
+                            sectionid: '<?php echo esc_js(sanitize_text_field($_GET['section_id'])); ?>',
+                            subsectiontitle: '<?php echo esc_js(sanitize_text_field($_GET['sub_sec_title'])); ?>',
 
                         },      
 
@@ -374,11 +381,11 @@ if (!is_null($quizid)) {
 
                         data: { 
 
-                            action: 'myst_staff_training_quiz_module_delete_question_backend', 
+                            action: 'mystaff_training_staff_training_quiz_module_delete_question_backend', 
                             quesid: quesid,
                             quizid: quizid,
-                            sectionid: '<?php echo esc_js($_GET['section_id']); ?>',
-                            subsectiontitle: '<?php echo esc_js($_GET['sub_sec_title']); ?>',
+                            sectionid: '<?php echo esc_js(sanitize_text_field($_GET['section_id'])); ?>',
+                            subsectiontitle: '<?php echo esc_js(sanitize_text_field($_GET['sub_sec_title'])); ?>',
 
                         },      
 
@@ -448,7 +455,7 @@ if (!is_null($quizid)) {
 
                         data: { 
 
-                            action: 'myst_staff_training_quiz_module_delete_quiz_backend', 
+                            action: 'mystaff_training_staff_training_quiz_module_delete_quiz_backend', 
                             quizid: quizid,
                         },      
 

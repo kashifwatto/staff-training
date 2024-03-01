@@ -13,62 +13,55 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
-function st_add_custom_color_css_variable() {
+function mystaff_training_custom_color_css_variable() {
     $custom_color = get_option('global_color');
     if (!empty($custom_color)) {
-        echo '<style>:root { --global-color: ' . esc_attr($custom_color) . '; }</style>';
+        echo '<style>:root{--global-color:'.esc_attr($custom_color).';}</style>';
     }
 }
-add_action('wp_head', 'st_add_custom_color_css_variable');
-add_action('admin_head', 'st_add_custom_color_css_variable');
-if (!defined('st_my_plugin_dir_folder')) {
-    define('st_my_plugin_dir_folder', plugin_dir_url(__File__));
+add_action('wp_head', 'mystaff_training_custom_color_css_variable');
+add_action('admin_head', 'mystaff_training_custom_color_css_variable');
+if (!defined('mystaff_training_plugin_dir_folder')) {
+    define('mystaff_training_plugin_dir_folder', plugin_dir_url(__File__));
 }
 // Enqueue scripts and styles
-add_action("admin_enqueue_scripts", "st_enqueue_custom_scripts");
-add_action("wp_enqueue_scripts", "st_enqueue_custom_scripts");
+add_action("admin_enqueue_scripts", "mystaff_training_enqueu_custom_scripts");
+add_action("wp_enqueue_scripts", "mystaff_training_enqueu_custom_scripts");
 
-function st_enqueue_custom_scripts() {
-    wp_enqueue_style("admin-css", st_my_plugin_dir_folder . '/css/admin.css');
-    wp_enqueue_style("child-css", st_my_plugin_dir_folder . '/style.css');
-    wp_enqueue_style("quizstyle-css", st_my_plugin_dir_folder . '/css/quiz-style.css');
-    wp_enqueue_style("datatable-css", st_my_plugin_dir_folder . '/css/datatables.css');
-    wp_enqueue_style("sweetalert-css", st_my_plugin_dir_folder . '/css/sweetalert2.css');
-    wp_enqueue_style("bootstrap-css", st_my_plugin_dir_folder . '/css/bootstrap.css');
-  
-
+function mystaff_training_enqueu_custom_scripts() {
+    wp_enqueue_style("admin-css", mystaff_training_plugin_dir_folder . '/css/admin.css');
+    wp_enqueue_style("child-css", mystaff_training_plugin_dir_folder . '/style.css');
+    wp_enqueue_style("quizstyle-css", mystaff_training_plugin_dir_folder . '/css/quiz-style.css');
+    wp_enqueue_style("datatable-css", mystaff_training_plugin_dir_folder . '/css/datatables.css');
+    wp_enqueue_style("sweetalert-css", mystaff_training_plugin_dir_folder . '/css/sweetalert2.css');
+    wp_enqueue_style("bootstrap-css", mystaff_training_plugin_dir_folder . '/css/bootstrap.css');
     wp_enqueue_media();
-
- wp_enqueue_script("timer-js", plugins_url("/js/timer.js", __FILE__), array('jquery'), time(), true);
+    wp_enqueue_script("timer-js", plugins_url("/js/timer.js", __FILE__), array('jquery'), time(), true);
     wp_enqueue_script("tagsinput", plugins_url("/js/tagsinput.js", __FILE__), array('jquery'), time(), true);
     wp_enqueue_script("validate", plugins_url("/js/jquery.validate.js", __FILE__), array('jquery'), time(), true);
-    
     wp_enqueue_script("datatable-js", plugins_url("/js/datatables.js", __FILE__), array('jquery'), time(), true);
     wp_enqueue_script("sweetaleert-js", plugins_url("/js/sweetalert2.js", __FILE__), array('jquery'), time(), true);
     wp_enqueue_script("bootstrap-js", plugins_url("/js/bootstrap.js", __FILE__), array('jquery'), time(), true);
-
-    
-       // Enqueue your plugin script
-       wp_enqueue_script('your-plugin-script', plugin_dir_url(__FILE__) . 'js/script.js', array('jquery'), '1.0', true);
-
-       // Localize script with dynamic AJAX URL
-       wp_localize_script('your-plugin-script', 'myAjax', array(
+    wp_enqueue_script('your-plugin-script', plugin_dir_url(__FILE__) . 'js/script.js', array('jquery'), '1.0', true);
+    wp_localize_script('your-plugin-script', 'myAjax', array(
            'ajax_url' => admin_url('admin-ajax.php'),
            'site_url' => site_url(),
        ));
 }
-
-register_activation_hook(__FILE__, 'st_my_plugin_activation_create_new_page');
-
+register_activation_hook(__FILE__, 'mystaff_training_create_new_page_plugin_activation');
 // Activation callback function
-function st_my_plugin_activation_create_new_page(){
-    
-  $page_title = "Dashboard";
+function mystaff_training_create_new_page_plugin_activation(){    
+    $page_title = "Dashboard";
 
     // Check if a page with the title exists
-    $existing_page = get_page_by_title($page_title, OBJECT, 'page');
+    $existing_page = new WP_Query(array(
+        'post_type'      => 'page',
+        'post_status'    => 'publish',
+        'name'           => sanitize_title($page_title),
+        'posts_per_page' => 1,
+    ));
 
-    if (!$existing_page) {
+    if (!$existing_page->have_posts()) {
         // Create a new page
         $new_page_id = wp_insert_post(array(
             'post_title'   => $page_title,
@@ -76,31 +69,23 @@ function st_my_plugin_activation_create_new_page(){
             'post_status'  => 'publish',
             'post_type'    => 'page',
         ));
+    }
 
-        
-    } 
-   
-
+    // Be sure to reset the query to avoid potential conflicts
+    wp_reset_postdata();
 }
-
-add_filter('page_template', 'st_checkwp_page_template');
-
-function st_checkwp_page_template( $page_template )
+add_filter('page_template', 'mystaff_training_check_page_exsistence_plugin_activation');
+function mystaff_training_check_page_exsistence_plugin_activation( $page_template )
 {
     if ( is_page( 'Dashboard' ) ) {
         $page_template = plugin_dir_path( __FILE__ ) . 'templates/template-dashboard.php';
     }
     return $page_template;
 }
-
-function st_mycustom_plugin_create_database_table(){
-
+function mystaff_training_create_new_database_table(){
     global $wpdb;
-$charset_collate = $wpdb->get_charset_collate();
+// $charset_collate = $wpdb->get_charset_collate();
 require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-
-
-
 // Table names
 $quiz_score_tbl = $wpdb->prefix . 'quiz_section_score';
 $coin_wallet = $wpdb->prefix . 'coin_wallet';
@@ -110,25 +95,18 @@ $coin_table_name = $wpdb->prefix . 'coin_wallet';
 $atl_products_table_name = $wpdb->prefix . 'atl_products';
 $atl_orders_table_name = $wpdb->prefix . 'atl_orders';
 $table_name = $wpdb->prefix . 'learning_sections';
-
 // Add column in Wp-user;
 // Add your custom column name
 $custom_column_name = 'self_assigned_date';
-
 // Get the prefixed table name
 $custom_table_name = $wpdb->prefix . 'users';
-
 // Check if the column exists before adding it
 if ($wpdb->get_var("SHOW COLUMNS FROM {$custom_table_name} LIKE '{$custom_column_name}'") != $custom_column_name) {
     // Define the SQL query to add the new column
     $sql = "ALTER TABLE {$custom_table_name} ADD COLUMN {$custom_column_name} DATE DEFAULT NULL";
-
-    // Execute the SQL query
+        // Execute the SQL query
     $wpdb->query($sql);
 }
-
-
-
 $sql = "CREATE TABLE IF NOT EXISTS $table_name (
     id mediumint(9) NOT NULL AUTO_INCREMENT,
     title varchar(255) NOT NULL,
@@ -139,15 +117,9 @@ $sql = "CREATE TABLE IF NOT EXISTS $table_name (
     sort_order int NOT NULL,
     cat varchar(255) NOT NULL,
     PRIMARY KEY (id)
-) $charset_collate;";
-
+)DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;";
 $wpdb->query($sql);
-
-
-
-
 // Table structure for quiz_section_score
-
 $sql = "CREATE TABLE IF NOT EXISTS $quiz_score_tbl (
     id mediumint(9) NOT NULL AUTO_INCREMENT,
     quizid mediumint(9) NOT NULL, 
@@ -157,20 +129,16 @@ $sql = "CREATE TABLE IF NOT EXISTS $quiz_score_tbl (
     score_weight varchar(255),
     coins int(11),
     PRIMARY KEY (id)
-) $wpdb->charset_collate;";
-
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;";
 $wpdb->query($sql);
-
 // Table structure for coin_wallet
 $sql = "CREATE TABLE IF NOT EXISTS $coin_wallet (
     id int(11) NOT NULL AUTO_INCREMENT,
     user_id int(11) NOT NULL,
     total_coins int(11) NOT NULL,
     PRIMARY KEY (id)
-) $wpdb->charset_collate;";
-
+)DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;";
 $wpdb->query($sql);
-
 // Table structure for quiz_details
 $sql = "CREATE TABLE IF NOT EXISTS $quiz_details (
     quizid INT NOT NULL AUTO_INCREMENT,
@@ -179,10 +147,8 @@ $sql = "CREATE TABLE IF NOT EXISTS $quiz_details (
     question_list LONGTEXT NOT NULL,
     PRIMARY KEY (quizid),
     INDEX (sectionid)
-) $charset_collate;";
-
+)DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;";
 $wpdb->query($sql);
-
 // Table structure for quiz_user_details
 $sql = "CREATE TABLE IF NOT EXISTS $quiz_user_details (
     id mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -191,12 +157,8 @@ $sql = "CREATE TABLE IF NOT EXISTS $quiz_user_details (
     quizdata TEXT NOT NULL,
     score varchar(255),
     PRIMARY KEY (id)
-) $wpdb->charset_collate;";
-
+)DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;";
 $wpdb->query($sql);
-
-
-
 // Table structure for atl_atl_products
 $sql = "CREATE TABLE IF NOT EXISTS $atl_products_table_name (
     id int(11) NOT NULL AUTO_INCREMENT,
@@ -205,10 +167,8 @@ $sql = "CREATE TABLE IF NOT EXISTS $atl_products_table_name (
     product_price varchar(255) NOT NULL,
     image_icon varchar(255) NOT NULL,
     PRIMARY KEY (id)
-) $wpdb->charset_collate;";
-
+)DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;";
 $wpdb->query($sql);
-
 // Table structure for atl_orders
 $sql = "CREATE TABLE IF NOT EXISTS $atl_orders_table_name (
     id int(11) NOT NULL AUTO_INCREMENT,
@@ -219,18 +179,12 @@ $sql = "CREATE TABLE IF NOT EXISTS $atl_orders_table_name (
     payment_method varchar(255) NOT NULL,
     order_status varchar(255) NOT NULL,
     PRIMARY KEY (id)
-) $wpdb->charset_collate;";
-
+)DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;";
 $wpdb->query($sql);
-
-
-
 }
-register_activation_hook( __FILE__, 'st_mycustom_plugin_create_database_table' );
+register_activation_hook( __FILE__, 'mystaff_training_create_new_database_table' );
 // Settings
-
-function myst_childthemewpdotcom_register_settings() {
-
+function mystaff_training_childthemewpdotcom_register_settings() {
     register_setting( "childthemewpdotcom_theme_options_group", "childthemewpdotcom_setting_x", "ctwp_callback" );
     register_setting( 'ls-settings-group', 'first_wlcm_message' );
     register_setting( 'ls-settings-group', 'scnd_cmpltd_message' );
@@ -251,8 +205,7 @@ function myst_childthemewpdotcom_register_settings() {
     register_setting( 'ls-settings-group', 'if_timer' );
     register_setting( 'ls-settings-group', 'quiz_timer' );
     register_setting( 'ls-settings-group', 'atls_img' );
-    register_setting( 'ls-settings-group', 'global_color' );
-    
+    register_setting( 'ls-settings-group', 'global_color' );    
     register_setting( 'ls-settings-group', 'self_assign_wait_days' );   
     register_setting( 'ls-settings-group', 'if_leagues' );
     register_setting( 'ls-settings-group', 'if_self_assign' );
@@ -262,31 +215,16 @@ function myst_childthemewpdotcom_register_settings() {
     register_setting( 'ls-settings-group', 'league1_title' );
     register_setting( 'ls-settings-group', 'league2_title' );
     register_setting( 'ls-settings-group', 'league3_title' );
-
 }
-
-add_action( "admin_init", "myst_childthemewpdotcom_register_settings" );
-
-
-
+add_action( "admin_init", "mystaff_training_childthemewpdotcom_register_settings" );
 // Options Page
-
-function myst_childthemewpdotcom_register_options_page() {
-
-    add_options_page("Child Theme Settings", "My Child Theme", "manage_options", "childthemewpdotcom", "myst_childthemewpdotcom_theme_options_page");
-
+function mystaff_training_childthemewpdotcom_register_options_page() {
+    add_options_page("Child Theme Settings", "My Child Theme", "manage_options", "childthemewpdotcom", "mystaff_training_childthemewpdotcom_theme_options_page");
 }
-
-add_action("admin_menu", "myst_childthemewpdotcom_register_options_page");
-
-
-
+add_action("admin_menu", "mystaff_training_childthemewpdotcom_register_options_page");
 //ChildThemeWP.com Options Form
-
-function myst_childthemewpdotcom_theme_options_page() { ?>
-
+function mystaff_training_childthemewpdotcom_theme_options_page() { ?>
 <div>
-
     <style>
         table.childthemewpdotcom {
             table-layout: fixed;
@@ -326,7 +264,7 @@ function myst_childthemewpdotcom_theme_options_page() { ?>
                     <p><label><input size="76" type="checkbox" name="childthemewpdotcom_setting_x"
                                 id="childthemewpdotcom_setting_x" <?php
                                 if((esc_attr(get_option("childthemewpdotcom_setting_x"))=="Yes" )) {
-                                echo " checked='checked' " ; } ?>
+                                echo "checked='checked'" ; } ?>
 
                             value="Yes" >
 
@@ -350,12 +288,12 @@ function myst_childthemewpdotcom_theme_options_page() { ?>
 <?php
 }
 
-function myst_pr($data){
+function mystaff_training_pr($data){
     echo "<pre>";
         print_r($data);
     echo "</pre>";
 }
-function myst_get_progress_bar($total_steps, $total_completed_step){?>
+function mystaff_training_get_progress_bar($total_steps, $total_completed_step){?>
 
 <div class="progress-section">
 
@@ -401,7 +339,7 @@ function myst_get_progress_bar($total_steps, $total_completed_step){?>
 /**
  * Get quiz progress bar
  */
-function myst_get_quiz_progress_bar($quiz_score){
+function mystaff_training_get_quiz_progress_bar($quiz_score){
     
     $quiz_score = round($quiz_score);
     if($quiz_score == get_option('gold_score_min')):
@@ -422,7 +360,7 @@ function myst_get_quiz_progress_bar($quiz_score){
                 <span>
                     <?php echo esc_html($quiz_score); ?>%
                 </span>
-                <img src="<?php echo st_my_plugin_dir_folder.'/images/'.$cls; ?>" width="25px;" />
+                <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/images/'.$cls); ?>" width="25px;" />
             </div>
         </div>
         <div class="pro-percentage-bar">
@@ -434,7 +372,7 @@ function myst_get_quiz_progress_bar($quiz_score){
 
 /* Get Current Steps */
 
-function myst_get_current_steps($learning_modules){
+function mystaff_training_get_current_steps($learning_modules){
 
     $count = 0;
 
@@ -462,7 +400,7 @@ function myst_get_current_steps($learning_modules){
 <div class="overlay-content popup" id="cmplt_quizresult_<?php echo esc_attr($sectionid); ?>">
     <button class="close-btn">x</button>
     <div class="learning-modules box-shadows">
-        <?php myst_get_wrong_answer_list(get_current_user_id(),$sectionid); ?>
+        <?php mystaff_training_get_wrong_answer_list(get_current_user_id(),$sectionid); ?>
     </div>
 </div>
 <?php
@@ -484,13 +422,13 @@ function myst_get_current_steps($learning_modules){
 
 }
 
-function myst_get_wrong_answer_list($user_id,$section_id){
+function mystaff_training_get_wrong_answer_list($user_id,$section_id){
     global $wpdb;
     $quiz_table = $wpdb->prefix.'quiz_details';
     $quiz_user_table = $wpdb->prefix.'quiz_user_details';
     $quiz_section_score = $wpdb->prefix.'quiz_section_score';
     
-    $section_data = myst_staff_training_get_specific_section_by_id($section_id);
+    $section_data = mystaff_training_staff_training_get_specific_section_by_id($section_id);
     $results = $wpdb->get_results(
         $wpdb->prepare(
             "SELECT * FROM {$wpdb->prefix}quiz_details as qt 
@@ -578,7 +516,8 @@ function myst_get_wrong_answer_list($user_id,$section_id){
                     <span>
                         <?php echo esc_html($quiz_score); ?>%
                     </span>
-                    <img src="<?php echo st_my_plugin_dir_folder.'/images/'.$cls; ?>" width="25px;" />
+                    <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder.'/images/'.$cls); ?>" width="25px;" />
+
                 </div>
             </div>
             <div class="pro-percentage-bar">
@@ -588,7 +527,7 @@ function myst_get_wrong_answer_list($user_id,$section_id){
         </div>
     </div>
 
-    <table class='info-tab' border='1'>
+    <table class="info-tab" border='1'>
         <thead>
             <tr>
                 <th>Incorrect Answers</th>
@@ -652,16 +591,19 @@ function myst_get_wrong_answer_list($user_id,$section_id){
     </table>
 
 </div>
-<?php echo wp_kses_post($body);
+
+<?php 
+// commented by kashif at 29feb 12:42 due to handling undifined variable $body 
+// echo wp_kses_post($body);
 
 }
 
 
 /* Custom Shortcode */
 
-add_shortcode('myst_learning_modules_action_btn', 'myst_learning_modules_action_btn');
+add_shortcode('mystaff_training_learning_modules_action_btn', 'mystaff_training_learning_modules_action_btn');
 
-function myst_learning_modules_action_btn(){
+function mystaff_training_learning_modules_action_btn(){
 
     global $wp, $wpdb;
     ob_start();
@@ -687,11 +629,25 @@ function myst_learning_modules_action_btn(){
                 if($page_val['sub_completed_url'] == $page_link || $page_val['sub_completed_url'] ==  $page_link.'/'){
                     /* if($user_id == 3 || $user_id == 2) :  */
                         $subtitle = $val['id'].'_'.$page_val['sub_title'];
-                        $results = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}quiz_details where sectionid = {$val['id']} AND subsection_title = '$subtitle' ",ARRAY_A);
+                        $results = $wpdb->get_row(
+                            $wpdb->prepare(
+                                "SELECT * FROM {$wpdb->prefix}quiz_details WHERE sectionid = %d AND subsection_title = %s",
+                                $val['id'],
+                                $subtitle
+                            ),
+                            ARRAY_A
+                        );
 
                     
                         if(!empty($results)){
-                            $userdata = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}quiz_user_details where userid = {$user_id} AND quizid = {$results['quizid']} ", ARRAY_A);
+                            $userdata = $wpdb->get_row(
+                                $wpdb->prepare(
+                                    "SELECT * FROM {$wpdb->prefix}quiz_user_details WHERE userid = %d AND quizid = %d",
+                                    $user_id,
+                                    $results['quizid']
+                                ),
+                                ARRAY_A
+                            );
                          
                             
                         }
@@ -705,8 +661,8 @@ function myst_learning_modules_action_btn(){
                                     echo '<input type="hidden" value=" '.esc_attr( get_option('quiz_timer')).'" name="quiz_btn_timer" id="quiz_btn_timer">';
                                 }
 
-                                echo '<div class="myst_learning_modules_action_btn_quiz"><a href="javascript:void(0);" class="start_quiz" data-quizid="'.$results['quizid'].'">Start Quiz</a></div><style>.myst_learning_modules_action_btn_quiz a {display: block;width: 100%;text-align: center;color: #1288cc !important;border: 1px solid #1288cc;font-size: 18px;margin: 0 auto;font-weight: bold;text-transform: uppercase;text-decoration: none !important;padding: 15px;font-family: "Roboto";max-width: 200px;} .myst_learning_modules_action_btn_quiz a:hover {background: #1288cc;color: #fff !important;}</style>';
-                                wp_quiz_wizard_popup($results['quizid'],$user_id);
+                                echo '<div class="mystaff_training_learning_modules_action_btn_quiz"><a href="javascript:void(0);" class="start_quiz" data-quizid="'.$results['quizid'].'">Start Quiz</a></div><style>.mystaff_training_learning_modules_action_btn_quiz a {display: block;width: 100%;text-align: center;color: #1288cc !important;border: 1px solid #1288cc;font-size: 18px;margin: 0 auto;font-weight: bold;text-transform: uppercase;text-decoration: none !important;padding: 15px;font-family: "Roboto";max-width: 200px;} .mystaff_training_learning_modules_action_btn_quiz a:hover {background: #1288cc;color: #fff !important;}</style>';
+                                mystaff_training_quiz_wizard_popup($results['quizid'],$user_id);
 
                             echo '</div>';
                             echo '<style>
@@ -962,7 +918,7 @@ function myst_learning_modules_action_btn(){
                             .People-top-header.learning-top-header{
                                 padding-bottom: 30px;
                             }
-                            .myst_learning_modules_action_btn_quiz a.start_quiz.disabled {
+                            .mystaff_training_learning_modules_action_btn_quiz a.start_quiz.disabled {
                                 opacity: 0.5;
                                 pointer-events: none;
                                 cursor: not-allowed !important;
@@ -1010,7 +966,7 @@ function myst_learning_modules_action_btn(){
                             </style>';
                             break;
                         }else{
-                            echo '<div class="myst_learning_modules_action_btn"><a href="">Complete</a></div><style>.myst_learning_modules_action_btn a {display: block;width: 100%;text-align: center;color: #1288cc !important;border: 1px solid #1288cc;font-size: 18px;margin: 0 auto;font-weight: bold;text-transform: uppercase;text-decoration: none !important;padding: 15px;font-family: "Roboto";max-width: 200px;} .myst_learning_modules_action_btn a:hover {background: #1288cc;color: #fff !important;}</style>';
+                            echo '<div class="mystaff_training_learning_modules_action_btn"><a href="">Complete</a></div><style>.mystaff_training_learning_modules_action_btn a {display: block;width: 100%;text-align: center;color: #1288cc !important;border: 1px solid #1288cc;font-size: 18px;margin: 0 auto;font-weight: bold;text-transform: uppercase;text-decoration: none !important;padding: 15px;font-family: "Roboto";max-width: 200px;} .mystaff_training_learning_modules_action_btn a:hover {background: #1288cc;color: #fff !important;}</style>';
                             break;
                         }
                    
@@ -1030,11 +986,17 @@ function myst_learning_modules_action_btn(){
 }
 
 /**Quiz Wizard popup */
-function wp_quiz_wizard_popup($quizid,$userid){
+function mystaff_training_quiz_wizard_popup($quizid,$userid){
 
     global $wpdb;
 
-    $results = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}quiz_details where quizid = {$quizid} ",ARRAY_A);
+    $results = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}quiz_details WHERE quizid = %d",
+            $quizid
+        ),
+        ARRAY_A
+    );
 
     $title = explode("_",$results['subsection_title'])[1];
     $secid = $results['sectionid'];
@@ -1055,9 +1017,9 @@ function wp_quiz_wizard_popup($quizid,$userid){
                 $list = json_decode($results['question_list']);
                 foreach($list as $key => $value){
                     ?>
-            <div class="question-wrapper" data-qid="<?php echo $key; ?>">
+            <div class="question-wrapper" data-qid="<?php echo esc_attr($key); ?>">
                 <h6 class="q-title">Question
-                    <?php echo $key.'. '.$value->Question; ?>
+                    <?php echo esc_attr($key).'. '.$value->Question; ?>
                 </h6>
                 <div class="ans-wrap">
                     <?php
@@ -1073,35 +1035,41 @@ function wp_quiz_wizard_popup($quizid,$userid){
                             ?>
 
                     <div class="ans-d">
-                        <span class="options"><input type="checkbox" name="q_answer[]"
-                                id="q_answer_<?php echo $key . '_' . $k; ?>" data-isselected="<?php echo $selected; ?>"
-                                value="<?php echo $k; ?>" />
-                            <label for="q_answer_<?php echo $key . '_' . $k; ?>" name="answerlabel">
-                                <?php echo esc_attr($ans); ?>
-                            </label>
-                        </span>
+                       
+                        <span class="options">
+    <input type="checkbox" name="q_answer[]"
+           id="q_answer_<?php echo esc_attr($key . '_' . $k); ?>"
+           data-isselected="<?php echo esc_attr($selected); ?>"
+           value="<?php echo esc_attr($k); ?>" />
+
+    <label for="q_answer_<?php echo esc_attr($key . '_' . $k); ?>" name="answerlabel">
+        <?php echo esc_html($ans); ?>
+    </label>
+</span>
+
 
                     </div>
                     <?php
                             }else{
                             ?>
-                    <div class="ans-d">
-                        <span class="options"><input type="radio" name="q_answer_<?php echo $key; ?>"
-                                id="q_answer_<?php echo $key . '_' . $k;?>" data-isselected="<?php echo $selected; ?>"
-                                value="<?php echo $k;  ?>" />
-                            <label for="q_answer_<?php echo $key . '_' . $k;?>" name="answerlabel">
-                                <?php echo esc_attr($ans);?>
-                            </label>
-                        </span>
-
-                    </div>
+<div class="ans-d">
+    <span class="options">
+        <input type="radio" name="q_answer_<?php echo esc_attr($key); ?>"
+               id="q_answer_<?php echo esc_attr($key . '_' . $k); ?>"
+               data-isselected="<?php echo esc_attr($selected); ?>"
+               value="<?php echo esc_attr($k); ?>" />
+        <label for="q_answer_<?php echo esc_attr($key . '_' . $k); ?>" name="answerlabel">
+            <?php echo esc_attr($ans); ?>
+        </label>
+    </span>
+</div>
                     <?php
                             }
                         }
                         ?>
                 </div><!-- .ans-wrap -->
                 <div class="ques-next">
-                    <button class="next-btn" data-nextid="<?php  echo $key+1;  ?>">Next</button>
+                <button class="next-btn" data-nextid="<?php echo esc_attr($key + 1); ?>">Next</button>
                 </div>
             </div><!-- .question-wrapper -->
             <?php
@@ -1114,8 +1082,8 @@ function wp_quiz_wizard_popup($quizid,$userid){
                 </div>
             </div>
             <div class="loading-gif" style="display:none">
-                <img src="<?php echo st_my_plugin_dir_folder ?>/templates/loading.gif" alt="" class="loader"
-                    width="30px" height="30px">
+            <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder) ?>/templates/loading.gif" alt="" class="loader" width="30px" height="30px">
+
             </div>
         </div>
         
@@ -1125,22 +1093,43 @@ function wp_quiz_wizard_popup($quizid,$userid){
 <?php
 }
 
-add_action('wp_ajax_myst_quiz_modules_save_action_frontend','myst_quiz_modules_save_action_frontend');
-add_action('wp_ajax_nopriv_myst_quiz_modules_save_action_frontend','myst_quiz_modules_save_action_frontend');
-function myst_quiz_modules_save_action_frontend(){
+add_action('wp_ajax_mystaff_training_quiz_modules_save_action_frontend','mystaff_training_quiz_modules_save_action_frontend');
+add_action('wp_ajax_nopriv_mystaff_training_quiz_modules_save_action_frontend','mystaff_training_quiz_modules_save_action_frontend');
+function mystaff_training_quiz_modules_save_action_frontend(){
     global $wpdb;
     
-    $quizid = sanitize_text_field( $_POST['quizid'] );
-    $userid = sanitize_text_field($_POST['userid']);
+    $quiz_id = sanitize_text_field( $_POST['quizid'] );
+    $quizid = $quiz_id;
+
+    $user_id = sanitize_text_field($_POST['userid']);
+    $userid = $user_id;
+    
+
+    
     $quizdata = $_POST['quizdata'];
+  
+
     $correctCount = 0;
     
 
     $quiz_table_name = $wpdb->prefix . 'quiz_user_details';
-    $if_exists = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}quiz_user_details where quizid = {$quizid} AND userid = {$userid}",ARRAY_A);
 
-    $results = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}quiz_details where quizid = {$quizid}",ARRAY_A);
-
+    $if_exists = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}quiz_user_details WHERE quizid = %d AND userid = %d",
+            $quizid,
+            $userid
+        ),
+        ARRAY_A
+    );
+    
+    $results = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}quiz_details WHERE quizid = %d",
+            $quizid
+        ),
+        ARRAY_A
+    );
     
     $qlist = json_decode($results['question_list'],true);
     $total_no_qu = count($qlist);
@@ -1208,24 +1197,24 @@ function myst_quiz_modules_save_action_frontend(){
         }
     }
 
-    echo json_encode($response);
+    echo  wp_json_encode($response);
     die;
 }
 
 
 /* Store the step date */
 
-function myst_learning_modules_save_action() {
+function mystaff_training_learning_modules_save_action() {
     global $wpdb;
     if(is_user_logged_in()){
         $user_id = get_current_user_id();
     }    
-    //$sid = $_POST['sectionid'];
     $learning_modules = get_user_meta( $user_id , 'learning_modules_progress', true);
     $flag = false;
     $learning_modules = unserialize($learning_modules);
 
-    $page_link = $_POST['data'];
+    $pagelink = sanitize_url($_POST['data']);
+    $page_link = $pagelink;
     
     $userdata = get_userdata($user_id);
     $username = $userdata->data->user_login;
@@ -1240,7 +1229,7 @@ function myst_learning_modules_save_action() {
         $pagesname = array_keys($val['pages']);
         foreach ($val['pages'] as $page_keys => $page_val){
 
-            if($page_val['sub_completed_url'] == $page_link || $page_val['sub_completed_url'] == $_POST['data'].'/'){
+            if($page_val['sub_completed_url'] == $page_link || $page_val['sub_completed_url'] == sanitize_url($_POST['data']).'/'){
                 
                 /**Redirect user to another subsection after completing the first subsection quiz 
                  * fetching next page url and 
@@ -1280,7 +1269,6 @@ function myst_learning_modules_save_action() {
     
     if($flag == false) {
         $quiz_table = $wpdb->prefix.'quiz_details';
-        // $if_quiz_exist = $wpdb->get_results("SELECT * FROM $quiz_table WHERE sectionid = $section_id",ARRAY_A);
         $if_quiz_exist = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT * FROM {$wpdb->prefix}quiz_details WHERE sectionid = %d",
@@ -1409,7 +1397,14 @@ function myst_learning_modules_save_action() {
             
             $scoreinsert = $wpdb->insert($quiz_section_score,array('userid' => $user_id,'sectionid'=>$section_id,'average_score' => $quiz_score,'score_weight' => $weight,'coins' => $pbs_cn));
             
-            $coin_data = $wpdb->get_row("SELECT * FROM  {$wpdb->prefix}coin_wallet WHERE user_id = {$user_id} ",ARRAY_A);
+            $coin_data = $wpdb->get_row(
+                $wpdb->prepare(
+                    "SELECT * FROM {$wpdb->prefix}coin_wallet WHERE user_id = %d",
+                    $user_id
+                ),
+                ARRAY_A
+            );
+            
            
             
             if(empty($coin_data)) {
@@ -1464,7 +1459,7 @@ function myst_learning_modules_save_action() {
                         <div class="bar-top" style="width: 100px ;text-align: right;-webkit-box-pack: end;-ms-flex-pack: end;justify-content: flex-end;">                       
                             <div class="pro-percentage" style="padding-bottom: 0;">
                                 <span>'.$quiz_score.'%</span>
-                                <img src="'.st_my_plugin_dir_folder.'/images/'.$cls.'" width="25px;"/>
+                                <img src="'.mystaff_training_plugin_dir_folder.'/images/'.$cls.'" width="25px;"/>
                             </div>
                         </div>
                     </div>
@@ -1515,7 +1510,7 @@ function myst_learning_modules_save_action() {
                     $body .= "</table>";
                 
             $body .= "</div>";
-            $serverHostname = $_SERVER['HTTP_HOST'];
+            $serverHostname =  sanitize_text_field($_SERVER['HTTP_HOST']);
             $currentDomain = preg_replace('/:\d+$/', '', $serverHostname);
             $headers = array('Content-Type: text/html; charset=UTF-8','From:  <noreply@' . $currentDomain . '>');
             //$to = get_bloginfo('admin_email') .", dholtby@wpstafflandscaping.ca, simon@wpstafflandscaping.ca";//comment by previous developer
@@ -1537,15 +1532,15 @@ function myst_learning_modules_save_action() {
 
 }
 
-add_action( 'wp_ajax_myst_learning_modules_save_action', 'myst_learning_modules_save_action' );
+add_action( 'wp_ajax_mystaff_training_learning_modules_save_action', 'mystaff_training_learning_modules_save_action' );
 
-add_action( 'wp_ajax_nopriv_myst_learning_modules_save_action', 'myst_learning_modules_save_action' );
+add_action( 'wp_ajax_nopriv_mystaff_training_learning_modules_save_action', 'mystaff_training_learning_modules_save_action' );
 
 
 /**Update all existing weight of sections */
-add_action('wp_ajax_myst_lm_score_weight_update','myst_lm_score_weight_update_bkp');
-add_action('wp_ajax_nopriv_myst_lm_score_weight_update','myst_lm_score_weight_update_bkp');
-function myst_lm_score_weight_update_bkp(){
+add_action('wp_ajax_mystaff_training_lm_score_weight_update','mystaff_training_lm_score_weight_update_bkp');
+add_action('wp_ajax_nopriv_mystaff_training_lm_score_weight_update','mystaff_training_lm_score_weight_update_bkp');
+function mystaff_training_lm_score_weight_update_bkp(){
     global $wpdb;
 
      
@@ -1563,7 +1558,6 @@ function myst_lm_score_weight_update_bkp(){
 
     $quiz_section_score = $wpdb->prefix.'quiz_section_score';
     
-    // $allr = $wpdb->get_results("SELECT * FROM {$quiz_section_score}", ARRAY_A);
     $allr = $wpdb->get_results(
         "SELECT * FROM {$wpdb->prefix}quiz_section_score",
         ARRAY_A
@@ -1592,9 +1586,9 @@ function myst_lm_score_weight_update_bkp(){
 
 
 /**Update all existing points/amount earned by users */
-add_action('wp_ajax_myst_lm_points_update','myst_lm_points_update_bkp');
-add_action('wp_ajax_nopriv_myst_lm_points_update','myst_lm_points_update_bkp');
-function myst_lm_points_update_bkp(){
+add_action('wp_ajax_mystaff_training_lm_points_update','mystaff_training_lm_points_update_bkp');
+add_action('wp_ajax_nopriv_mystaff_training_lm_points_update','mystaff_training_lm_points_update_bkp');
+function mystaff_training_lm_points_update_bkp(){
     global $wpdb;
 
      
@@ -1611,7 +1605,6 @@ function myst_lm_points_update_bkp(){
     $quiz_section_score = $wpdb->prefix.'quiz_section_score';
     $coin_wallet = $wpdb->prefix.'coin_wallet';
     
-    // $allr = $wpdb->get_results("SELECT * FROM {$quiz_section_score}", ARRAY_A);
     $allr = $wpdb->get_results(
         "SELECT * FROM {$wpdb->prefix}quiz_section_score",
         ARRAY_A
@@ -1631,8 +1624,14 @@ function myst_lm_points_update_bkp(){
             $coins = $fw;
         endif;
         $section_id = $row['sectionid'];
-        //$scoreupdate = $wpdb->update($quiz_section_score,array('coins' => $coins),array('id' => $row['id']));
-        $coin_data = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}coin_wallet WHERE user_id = {$row['userid']} ",ARRAY_A);
+        $coin_data = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT * FROM {$wpdb->prefix}coin_wallet WHERE user_id = %d",
+                $row['userid']
+            ),
+            ARRAY_A
+        );
+        
         
         
         if($coins != 0) {
@@ -1666,31 +1665,31 @@ function myst_lm_points_update_bkp(){
 
 /* Redirect user to Training Dashboard after successfully log in */
 
-function myst_login_redirect( $redirect_to, $request, $user ){
+function mystaff_training_login_redirect( $redirect_to, $request, $user ){
 
     return '/dashboard';
 
 }
 
-add_filter( 'login_redirect', 'myst_login_redirect', 15, 3 );
+add_filter( 'login_redirect', 'mystaff_training_login_redirect', 15, 3 );
 
 
 
-//add_filter( 'wp_mail_from', 'myst_custom_mail_from' ); 
-function myst_custom_mail_from( $old ) { 
+//add_filter( 'wp_mail_from', 'mystaff_training_custom_mail_from' ); 
+function mystaff_training_custom_mail_from( $old ) { 
     return get_option( 'admin_email' ); 
 } 
 
-add_filter( 'wp_mail_from_name', 'myst_custom_mail_from_name' ); 
-function myst_custom_mail_from_name( $old ) { 
+add_filter( 'wp_mail_from_name', 'mystaff_training_custom_mail_from_name' ); 
+function mystaff_training_custom_mail_from_name( $old ) { 
     return get_option( 'blogname' ); 
 }
 
 /* Redirect User to Login page if User Not looged in*/
 
-// add_action( 'wp_head', 'myst_redirect_if_user_not_logged_in' );
+// add_action( 'wp_head', 'mystaff_training_redirect_if_user_not_logged_in' );
 
-// function myst_redirect_if_user_not_logged_in() {
+// function mystaff_training_redirect_if_user_not_logged_in() {
 
 //  if ( !is_user_logged_in() && is_page(['how-we-work','entry-equipment', 'service']) ) {
 
@@ -1706,9 +1705,9 @@ function myst_custom_mail_from_name( $old ) {
 
 /* Redirect User to Login page if User Not looged in*/
 
-add_action( 'template_redirect', 'myst_redirect_if_user_not_logged_in',5 );
+add_action( 'template_redirect', 'mystaff_training_redirect_if_user_not_logged_in',5 );
 
-function myst_redirect_if_user_not_logged_in() {
+function mystaff_training_redirect_if_user_not_logged_in() {
 
     if ( !is_user_logged_in() && !is_page(501)) {
 
@@ -1723,8 +1722,8 @@ function myst_redirect_if_user_not_logged_in() {
 
 }
 
-add_action('admin_footer','myst_myst_draggable_script');
-function myst_myst_draggable_script(){
+add_action('admin_footer','mystaff_training_mystaff_training_draggable_script');
+function mystaff_training_mystaff_training_draggable_script(){
     if(is_admin()) {
         
         ?>
@@ -1738,7 +1737,7 @@ function myst_myst_draggable_script(){
             maxTags: 5,
             allowDuplicates: false,
             typehead: {
-                source: '<?php echo  get_option('em_id_list') ; ?>'
+                source: '<?php echo  esc_js(get_option('em_id_list')) ; ?>'
                     }
         });
 
@@ -1796,7 +1795,7 @@ function myst_myst_draggable_script(){
                 url: '<?php echo esc_url(site_url('/wp-admin/admin-ajax.php')); ?>',
                 type: "POST",
                 data: {
-                    action: 'myst_lm_score_weight_update',
+                    action: 'mystaff_training_lm_score_weight_update',
                 },
                 success: function (data) {
 
@@ -1818,7 +1817,7 @@ function myst_myst_draggable_script(){
                 url: '<?php echo esc_url(site_url('/wp-admin/admin-ajax.php')); ?>',
                 type: "POST",
                 data: {
-                    action: 'myst_lm_points_update',
+                    action: 'mystaff_training_lm_points_update',
                 },
                 success: function (data) {
 
@@ -1842,9 +1841,9 @@ function myst_myst_draggable_script(){
 
 
 
-add_action( 'wp_footer', 'myst_added_tab_switching' );
+add_action( 'wp_footer', 'mystaff_training_added_tab_switching' );
 
-function myst_added_tab_switching() {
+function mystaff_training_added_tab_switching() {
 
     if ( is_page(['how-we-work','entry-equipment', 'service']) ) {
 
@@ -1854,7 +1853,7 @@ function myst_added_tab_switching() {
 
     jQuery(document).ready(function () {
 
-        var current_step = '<?php echo esc_js($_GET['step']);?>';
+        var current_step = '<?php echo esc_js(sanitize_text_field($_GET['step']));?>';
 
         setTimeout(function () {
 
@@ -1886,10 +1885,11 @@ function myst_added_tab_switching() {
 
 
 
-function myst_my_save_item_order() {
+function mystaff_training_my_save_item_order() {
     global $wpdb;
 
-    $order = explode(',', $_POST['order']);
+    $order_sanitized = sanitize_text_field($_POST['order']);
+$order = explode(',', $order_sanitized);
     $counter = 0;
     foreach ($order as $item_id) {
         //$wpdb->update($wpdb->posts, array( 'menu_order' => $counter ), array( 'ID' => $item_id) );
@@ -1897,14 +1897,14 @@ function myst_my_save_item_order() {
     }
     die(1);
 }
-add_action('wp_ajax_item_sort', 'myst_my_save_item_order');
-add_action('wp_ajax_nopriv_item_sort', 'myst_my_save_item_order');
+add_action('wp_ajax_item_sort', 'mystaff_training_my_save_item_order');
+add_action('wp_ajax_nopriv_item_sort', 'mystaff_training_my_save_item_order');
 
 
 
 
 
-function myst_staff_training_menu() {
+function mystaff_training_staff_training_menu() {
 
     add_menu_page(
 
@@ -1916,70 +1916,70 @@ function myst_staff_training_menu() {
 
         'learning_sections',
 
-        'myst_staff_wpstaff_training_page_contents',
+        'mystaff_training_staff_wpstaff_training_page_contents',
 
         'dashicons-schedule',
 
         3
 
     );
-    add_submenu_page( 'admin.php?page=quiz-section', __('Quiz', 'wpstaff_training' ), '', 'manage_options', 'quiz-section', 'myst_staff_training_quiz_page_contents');
-    add_submenu_page( 'learning_sections', __('Staff', 'wpstaff_training' ), __( 'Staff', 'wpstaff_training' ), 'manage_options', 'staff-data', 'myst_staff_training_staff_list',6);
-    add_submenu_page( 'learning_sections', __('Leaderboard', 'wpstaff_training' ), __( 'Leaderboard', 'wpstaff_training' ), 'manage_options', 'leaderboard-data', 'myst_staff_training_lb_data',7);
-    add_submenu_page( 'learning_sections', __('Shop', 'wpstaff_training' ), __( 'Shop', 'wpstaff_training' ), 'manage_options', 'shop-items', 'myst_staff_training_shop_item',8);
-    add_submenu_page( 'learning_sections', __('Orders', 'wpstaff_training' ), __( 'Orders', 'wpstaff_training' ), 'manage_options', 'manage-orders', 'myst_staff_training_order_data',9);
-    add_submenu_page( 'learning_sections', __('User points', 'wpstaff_training' ), __( 'User points', 'wpstaff_training' ), 'manage_options', 'manage-userpoints', 'myst_staff_training_user_points',10);
-    add_submenu_page( 'learning_sections', __('Settings', 'wpstaff_training' ), __( 'Settings', 'wpstaff_training' ), 'administrator', 'message-settings', 'myst_staff_training_settings',11);
-    add_submenu_page( 'learning_sections', __('Trash List', 'wpstaff_training' ), __( 'Trash', 'wpstaff_training' ), 'manage_options', 'trash-list', 'myst_staff_training_trash_list',12);
+    add_submenu_page( 'admin.php?page=quiz-section', __('Quiz', 'wpstaff_training' ), '', 'manage_options', 'quiz-section', 'mystaff_training_staff_training_quiz_page_contents');
+    add_submenu_page( 'learning_sections', __('Staff', 'wpstaff_training' ), __( 'Staff', 'wpstaff_training' ), 'manage_options', 'staff-data', 'mystaff_training_staff_training_staff_list',6);
+    add_submenu_page( 'learning_sections', __('Leaderboard', 'wpstaff_training' ), __( 'Leaderboard', 'wpstaff_training' ), 'manage_options', 'leaderboard-data', 'mystaff_training_staff_training_lb_data',7);
+    add_submenu_page( 'learning_sections', __('Shop', 'wpstaff_training' ), __( 'Shop', 'wpstaff_training' ), 'manage_options', 'shop-items', 'mystaff_training_staff_training_shop_item',8);
+    add_submenu_page( 'learning_sections', __('Orders', 'wpstaff_training' ), __( 'Orders', 'wpstaff_training' ), 'manage_options', 'manage-orders', 'mystaff_training_staff_training_order_data',9);
+    add_submenu_page( 'learning_sections', __('User points', 'wpstaff_training' ), __( 'User points', 'wpstaff_training' ), 'manage_options', 'manage-userpoints', 'mystaff_training_staff_training_user_points',10);
+    add_submenu_page( 'learning_sections', __('Settings', 'wpstaff_training' ), __( 'Settings', 'wpstaff_training' ), 'administrator', 'message-settings', 'mystaff_training_staff_training_settings',11);
+    add_submenu_page( 'learning_sections', __('Trash List', 'wpstaff_training' ), __( 'Trash', 'wpstaff_training' ), 'manage_options', 'trash-list', 'mystaff_training_staff_training_trash_list',12);
     //add_submenu_page( 'learning_sections', __('Staff', 'wpstaff_training' ), __( 'Staff', 'wpstaff_training' ), 'manage_options', 'people-list', 'wpstaff_people_list',6);
 
 }
 
 
 
-add_action( 'admin_menu', 'myst_staff_training_menu',5 );
+add_action( 'admin_menu', 'mystaff_training_staff_training_menu',5 );
 
 
 
-function myst_staff_wpstaff_training_page_contents() {
+function mystaff_training_staff_wpstaff_training_page_contents() {
 
     include_once 'templates/template-learning-section.php';
 
 }
-function myst_staff_training_quiz_page_contents() {
+function mystaff_training_staff_training_quiz_page_contents() {
     include_once 'templates/template-quiz-section.php';
 }
-function myst_staff_training_trash_list() {
+function mystaff_training_staff_training_trash_list() {
     include_once 'templates/template-trash-data.php';
 }
 /* function wpstaff_people_list() {
     include_once 'templates/template-people-data.php';
 } */
-function myst_staff_training_staff_list() {
+function mystaff_training_staff_training_staff_list() {
     include_once 'templates/template-people-data.php';
 }
 
-function myst_staff_training_lb_data() {
+function mystaff_training_staff_training_lb_data() {
     include_once 'templates/template-leader-board.php';
 }
 
-function myst_staff_training_shop_item(){
+function mystaff_training_staff_training_shop_item(){
     include_once 'templates/template-shop-items.php';
 }
 
-function myst_staff_training_order_data(){
+function mystaff_training_staff_training_order_data(){
     include_once 'templates/template-orders.php';
 }
 
-function myst_staff_training_user_points(){
+function mystaff_training_staff_training_user_points(){
     include_once 'templates/template-user-points.php';
 }
 
-function myst_staff_training_fetch_img_url($turl){
-    return '<img src="'.st_my_plugin_dir_folder.'/images/'.$turl.'" height="30px;" width="30px;">';
+function mystaff_training_staff_training_fetch_img_url($turl){
+    return '<img src="'.mystaff_training_plugin_dir_folder.'/images/'.$turl.'" height="30px;" width="30px;">';
 }
 
-function myst_staff_training_settings() {
+function mystaff_training_staff_training_settings() {
 ?>
 <div class="wrap">
     <h1>Settings</h1>
@@ -2008,6 +2008,8 @@ function myst_staff_training_settings() {
                 <td>
                     <div class="msgs-wrap">
                         <?php 
+                        $scnd_cmpltd_messages = get_option('scnd_cmpltd_message');
+                        if (is_array($scnd_cmpltd_messages) && !empty($scnd_cmpltd_messages)){
                             foreach(get_option('scnd_cmpltd_message') as $key => $val) {
                             ?>
                         <div>
@@ -2015,7 +2017,7 @@ function myst_staff_training_settings() {
                                 class="message-after"><?php echo esc_attr( $val ); ?></textarea>
                             <a href="javascript:void(0)" onclick="deletethis(jQuery(this))">X</a>
                         </div>
-                        <?php } ?>
+                        <?php }} ?>
 
                     </div>
                     <div class="add-new-msg">
@@ -2052,13 +2054,13 @@ function myst_staff_training_settings() {
                         <?php
                             $exclude_users = get_option('user_id_list'); 
                             foreach(get_users() as $d => $uvalue) {
-                                
+                                $selected='';
                                 //$exclude_users = explode(",",get_option('user_id_list'));
                                 if(!empty($exclude_users)) {
 
                                     $selected = (in_array($uvalue->ID,$exclude_users)) ? 'selected' : '';
                                 }
-                                echo '<option value="'.$uvalue->ID.'" '.$selected.'>'.$uvalue->user_login.'</option>';
+                                echo '<option value="' . esc_attr($uvalue->ID) . '" ' . $selected . '>' . esc_html($uvalue->user_login) . '</option>';
                             }
                             ?>
                     </select>
@@ -2079,7 +2081,7 @@ function myst_staff_training_settings() {
                     <div class="trophydata">
                         <div class="range-cls">
                             <p>
-                                <?php echo myst_staff_training_fetch_img_url('trophygold.png'); ?>
+                                <?php echo mystaff_training_staff_training_fetch_img_url('trophygold.png'); ?>
                             </p>
                             <label><input type="number" name="gold_score_min" min="0" max="100" placeholder="eg. 100"
                                     value="<?php echo esc_attr( get_option('gold_score_min') ); ?>"></label>
@@ -2090,7 +2092,7 @@ function myst_staff_training_settings() {
                         </div>
                         <div class="range-cls">
                             <p>
-                                <?php echo myst_staff_training_fetch_img_url('trophysilver.png'); ?>
+                                <?php echo mystaff_training_staff_training_fetch_img_url('trophysilver.png'); ?>
                             </p>
                             <label><input type="number" name="silver_score_min" min="0" max="100" placeholder="eg. 100"
                                     value="<?php echo esc_attr( get_option('silver_score_min') ); ?>"></label>
@@ -2102,7 +2104,7 @@ function myst_staff_training_settings() {
                         </div>
                         <div class="range-cls">
                             <p>
-                                <?php echo myst_staff_training_fetch_img_url('trophybronze.png'); ?>
+                                <?php echo mystaff_training_staff_training_fetch_img_url('trophybronze.png'); ?>
                             </p>
                             <label><input type="number" name="bronze_score_min" min="0" max="100" placeholder="eg. 100"
                                     value="<?php echo esc_attr( get_option('bronze_score_min') ); ?>"></label>
@@ -2114,7 +2116,7 @@ function myst_staff_training_settings() {
                         </div>
                         <div class="range-cls">
                             <p>
-                                <?php echo myst_staff_training_fetch_img_url('trophyx.png'); ?>
+                                <?php echo mystaff_training_staff_training_fetch_img_url('trophyx.png'); ?>
                             </p>
                             <label><input type="number" name="fail_score_min" min="0" max="100" placeholder="eg. 100"
                                     value="<?php echo esc_attr( get_option('fail_score_min') ); ?>"></label>
@@ -2372,7 +2374,7 @@ function myst_staff_training_settings() {
 
 
 
-function myst_get_all_users($data = NULL){
+function mystaff_training_get_all_users($data = NULL){
 
     $users = get_users( );
 
@@ -2387,7 +2389,7 @@ function myst_get_all_users($data = NULL){
     <div class="section-title user-name">
         <?php 
                 if (!empty($user_ids) && in_array($user->ID, $user_ids)){ 
-                    echo myst_staff_training_fetch_quiz_by_u_s($secid, $user->ID); 
+                    echo mystaff_training_staff_training_fetch_quiz_by_u_s($secid, $user->ID); 
                 }
                 ?>
         <?php echo  esc_html($user_info->display_name); ?>
@@ -2466,8 +2468,9 @@ function myst_get_all_users($data = NULL){
             <?php 
                     if(!empty($user_ids) && in_array($user->ID, $user_ids)) {
                         ?>
-            <a href="javascript:void(0);" class="notify-user" data-userid="<?php echo $user->ID; ?>">
-                <img src="<?php echo st_my_plugin_dir_folder?>/images/email_64.png" alt="img" />
+            <a href="javascript:void(0);" class="notify-user" data-userid="<?php echo esc_attr($user->ID); ?>">
+            <img src="<?php echo esc_url(mystaff_training_plugin_dir_folder); ?>/images/email_64.png" alt="img" />
+
             </a>
             <?php
                     }
@@ -2484,7 +2487,7 @@ function myst_get_all_users($data = NULL){
 
 
 
-function myst_staff_training_get_learning_section(){
+function mystaff_training_staff_training_get_learning_section(){
 
     global $wpdb;
 
@@ -2500,7 +2503,7 @@ function myst_staff_training_get_learning_section(){
     return $learning_sections;
 
 }
-function myst_staff_training_get_learning_section_archived(){
+function mystaff_training_staff_training_get_learning_section_archived(){
 
     global $wpdb;
 
@@ -2517,13 +2520,19 @@ function myst_staff_training_get_learning_section_archived(){
 
 
 
-function myst_staff_training_get_specific_section_by_id($section_id){
+function mystaff_training_staff_training_get_specific_section_by_id($section_id){
 
     global $wpdb;
 
     $table_name = $wpdb->prefix . 'learning_sections';
 
-    $learning_details = $wpdb->get_row("SELECT * FROM  {$wpdb->prefix}learning_sections WHERE id=$section_id");
+    $learning_details = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}learning_sections WHERE id = %d",
+            $section_id
+        )
+    );
+    
    
 
     return $learning_details;
@@ -2533,11 +2542,11 @@ function myst_staff_training_get_specific_section_by_id($section_id){
 //define cron job schedule
 // add_action('init','activate_reminder_email_cron');
 // function activate_reminder_email_cron(){
-//  if (!wp_next_scheduled('myst_staff_training_send_reminder_emails')) {
-//         wp_schedule_event(time(), 'every_48_hours', 'myst_staff_training_send_reminder_emails');
+//  if (!wp_next_scheduled('mystaff_training_staff_training_send_reminder_emails')) {
+//         wp_schedule_event(time(), 'every_48_hours', 'mystaff_training_staff_training_send_reminder_emails');
 //     }
 //  // if(get_current_user_id() == 51) {
-//  //  myst_staff_training_send_reminder_emails();
+//  //  mystaff_training_staff_training_send_reminder_emails();
 //  // }
 // }
 
@@ -2552,7 +2561,7 @@ function myst_staff_training_get_specific_section_by_id($section_id){
 // add_filter('cron_schedules', 'custom_cron_intervals');
 
 // Define the function to send reminder emails
-function myst_staff_training_send_reminder_emails() {
+function mystaff_training_staff_training_send_reminder_emails() {
     // Fetch the users you want to send reminders to
     $users_to_remind = get_users();
     ob_start();
@@ -2609,7 +2618,13 @@ if(!empty($score_sql)) :
         
         $score_data = json_decode($row['score'],true);
         $score_arr[] = $score_data['percentage'];
-        $score_sql_row = $wpdb->get_row("SELECT subsection_title from {$wpdb->prefix}quiz_details where quizid = {$row['quizid']}",ARRAY_A);
+        $score_sql_row = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT subsection_title FROM {$wpdb->prefix}quiz_details WHERE quizid = %d",
+                $row['quizid']
+            ),
+            ARRAY_A
+        );
      
         $subsectitle = explode("_",$score_sql_row['subsection_title'])[1];
         $score_quizarr[$subsectitle] = $score_data['percentage'];
@@ -2631,7 +2646,7 @@ if(!empty($score_sql)) :
         elseif($quiz_score >= get_option('fail_score_min') && $quiz_score <= (get_option('bronze_score_min') - 1)):
             $cls = 'trophyx.png';
         endif;
-        $average = '<img src="'.st_my_plugin_dir_folder.'/images/'.$cls.'" style="width:25px;" />';
+        $average = '<img src="'.mystaff_training_plugin_dir_folder.'/images/'.$cls.'" style="width:25px;" />';
     }else{
         $average = '';
     }
@@ -2729,7 +2744,7 @@ endif;
                         <tbody>
                             <tr>
                                 <td style="padding:15px 10px;" align="center">
-                                    <?php myst_staff_training_get_custom_logo_function(); ?>
+                                    <?php mystaff_training_staff_training_get_custom_logo_function(); ?>
                                 </td>
                             </tr>
                         </tbody>
@@ -2833,7 +2848,7 @@ endif;
                                                                                     ?>
                                                                                     <td width="50%" align="left" valign="middle" style="padding-bottom: 20px;">
                                                                                         <p style="font-size:18px;font-weight:600;">
-                                                                                            <a href="<?php echo $learning_subsec['sub_start_url'].'?step='.urlencode($learning_subsec['sub_title']); ?>" style="color:#757376;"><?php echo $learning_subsec['sub_title']; ?></a>
+                                                                                        <a href="<?php echo esc_url($learning_subsec['sub_start_url'].'?step='.urlencode($learning_subsec['sub_title'])); ?>" style="color:#757376;"><?php echo esc_html($learning_subsec['sub_title']); ?></a>
                                                                                         </p>
                                                                                     </td>
                                                                                     <td width="50%" align="right" valign="middle" style="padding-bottom: 20px;">
@@ -2846,7 +2861,7 @@ endif;
                                                                                     ?>
                                                                                     <td width="50%" align="left" valign="middle" style="padding-bottom: 20px;">
                                                                                         <p style="font-size:18px;font-weight:600;">
-                                                                                            <a href="<?php echo $learning_subsec['sub_start_url'].'?step='.urlencode($learning_subsec['sub_title']); ?>" style="color:#757376;"><?php echo $learning_subsec['sub_title']; ?></a>
+                                                                                        <a href="<?php echo esc_url($learning_subsec['sub_start_url'].'?step='.urlencode($learning_subsec['sub_title'])); ?>" style="color:#757376;"><?php echo esc_html($learning_subsec['sub_title']); ?></a>
                                                                                         </p>
                                                                                     </td>
                                                                                     <td width="50%" align="right" valign="middle" style="padding-bottom: 20px;">
@@ -2860,7 +2875,7 @@ endif;
                                                                                 ?>
                                                                                 <td width="50%" align="left" valign="middle" style="padding-bottom: 20px;">
                                                                                     <p style="font-size:18px;font-weight:600;">
-                                                                                        <a href="<?php echo $learning_subsec['sub_start_url'].'?step='.urlencode($learning_subsec['sub_title']); ?>" style="color:#757376;"><?php echo $learning_subsec['sub_title']; ?></a>
+                                                                                    <a href="<?php echo esc_url($learning_subsec['sub_start_url'] . '?step=' . urlencode($learning_subsec['sub_title'])); ?>" style="color:#757376;"><?php echo esc_html($learning_subsec['sub_title']); ?></a>
                                                                                     </p>
                                                                                 </td>
                                                                                 <td width="50%" align="right" valign="middle" style="padding-bottom: 20px;">
@@ -2904,11 +2919,11 @@ endif;
                                                                             $pro_percentage = 100 / $total_steps;
                                                                             $pro_percentage = $pro_percentage * $total_completed_step;
                                                                         }
-                                                                        echo '<span>'.round($pro_percentage).'%</span>';
+                                                                        echo '<span>'.esc_html(round($pro_percentage)).'%</span>';
+
                                                                         $final_per = round($pro_percentage);
                                                                     }else{
-
-                                                                        echo '<span>'.$quiz_score.'%</span>';
+                                                                        echo '<span>'.esc_html($quiz_score).'%</span>';
                                                                         echo esc_html($average);
                                                                         $final_per = $quiz_score;
                                                                     }
@@ -3001,7 +3016,7 @@ endif;
 </html>
 <?php
         $mail_html .= ob_get_clean();
-        $serverHostname = $_SERVER['HTTP_HOST'];
+        $serverHostname =  sanitize_text_field($_SERVER['HTTP_HOST']);
 $currentDomain = preg_replace('/:\d+$/', '', $serverHostname);
             $headers = array('Content-Type: text/html; charset=UTF-8','From:  <noreply@' . $currentDomain . '>');
         $to = $useremail;
@@ -3015,13 +3030,15 @@ $currentDomain = preg_replace('/:\d+$/', '', $serverHostname);
  * Send email to user from admin panel
  * Admin can send user email for completing new section which is assigned to user
  */
-add_action('wp_ajax_notify_user_with_email','myst_staff_training_notify_user_with_email_callback');
-add_action('wp_ajax_nopriv_notify_user_with_email','myst_staff_training_notify_user_with_email_callback');
-function myst_staff_training_notify_user_with_email_callback(){
+add_action('wp_ajax_notify_user_with_email','mystaff_training_staff_training_notify_user_with_email_callback');
+add_action('wp_ajax_nopriv_notify_user_with_email','mystaff_training_staff_training_notify_user_with_email_callback');
+function mystaff_training_staff_training_notify_user_with_email_callback(){
     global $wpdb;
     $mail_body = '';
-    $userid = sanitize_text_field($_POST['user_id']);
-    $sectionid = sanitize_text_field($_POST['section_id']);
+    $user_id = sanitize_text_field($_POST['user_id']);
+    $userid = $user_id;
+    $section_id = sanitize_text_field($_POST['section_id']);
+    $sectionid = $section_id;
 
     $userdata = get_userdata($userid);
     $useremail = $userdata->user_email;
@@ -3059,7 +3076,13 @@ function myst_staff_training_notify_user_with_email_callback(){
             
             $score_data = json_decode($row['score'],true);
             $score_arr[] = $score_data['percentage'];
-            $score_sql_row = $wpdb->get_row("SELECT subsection_title from {$wpdb->prefix}quiz_details where quizid = {$row['quizid']}",ARRAY_A);
+            $score_sql_row = $wpdb->get_row(
+                $wpdb->prepare(
+                    "SELECT subsection_title FROM {$wpdb->prefix}quiz_details WHERE quizid = %d",
+                    $row['quizid']
+                ),
+                ARRAY_A
+            );
            
             $subsectitle = explode("_",$score_sql_row['subsection_title'])[1];
             $score_quizarr[$subsectitle] = $score_data['percentage'];
@@ -3081,7 +3104,7 @@ function myst_staff_training_notify_user_with_email_callback(){
             elseif($quiz_score >= get_option('fail_score_min') && $quiz_score <= (get_option('bronze_score_min') - 1)):
                 $cls = 'trophyx.png';
             endif;
-            $average = '<img src="'.st_my_plugin_dir_folder.'/images/'.$cls.'" style="width:25px;" />';
+            $average = '<img src="'.mystaff_training_plugin_dir_folder.'/images/'.$cls.'" style="width:25px;" />';
         }else{
             $average = '';
         }
@@ -3179,7 +3202,7 @@ function myst_staff_training_notify_user_with_email_callback(){
                             <tbody>
                                 <tr>
                                     <td style="padding:15px 10px;" align="center">
-                                        <?php myst_staff_training_get_custom_logo_function(); ?>
+                                        <?php mystaff_training_staff_training_get_custom_logo_function(); ?>
                                     </td>
                                 </tr>
                             </tbody>
@@ -3209,7 +3232,7 @@ function myst_staff_training_notify_user_with_email_callback(){
                                             style="margin-top: 10px;">
                                             <tbody>
                                                 <tr>
-                                                    <td bgcolor="#fff" style="padding:40px 30px;border-radius:8px;">
+                                                    <td color="#fff" style="padding:40px 30px;border-radius:8px;">
                                                         <!-- how we work table starts  -->
                                                         <table width="100%" cellpadding="0" cellspacing="0" align="center">
                                                             <tr>
@@ -3217,13 +3240,13 @@ function myst_staff_training_notify_user_with_email_callback(){
                                                                     
                                                                     <span style="display: inline-block; vertical-align: middle; width: 100px; height: 100px; border-radius: 50%; background-color: #e6f7ff; text-align: center; line-height: 100px; padding: 10px;">
                                                                         <?php if (!empty($value['image_icon'])) : ?>
-                                                                            <img src="<?php echo $value['image_icon']; ?>" alt="learning icon" style="max-width: 100%; max-height: 100%; border-radius: 50%;">
+                                                                            <img src="<?php echo esc_url($value['image_icon']); ?>" alt="learning icon" style="max-width: 100%; max-height: 100%; border-radius: 50%;">
                                                                         <?php endif; ?>
                                                                     </span>
     
                                                                 </td>
                                                                 <td width="75%" align="left" style="padding-left:15px ;">
-                                                                    <h3 style="color:#000;margin-bottom: 10px;"><?php echo $value['title']; ?> </h3>
+                                                                    <h3 style="color:#000;margin-bottom: 10px;"><?php echo esc_html($value['title']); ?> </h3>
                                                                     <?php 
                                                                     $count = 0;
     
@@ -3283,7 +3306,7 @@ function myst_staff_training_notify_user_with_email_callback(){
                                                                                         ?>
                                                                                         <td width="50%" align="left" valign="middle" style="padding-bottom: 20px;">
                                                                                             <p style="font-size:18px;font-weight:600;">
-                                                                                                <a href="<?php echo $learning_subsec['sub_start_url'].'?step='.urlencode($learning_subsec['sub_title']); ?>" style="color:#757376;"><?php echo $learning_subsec['sub_title']; ?></a>
+                                                                                            <a href="<?php echo esc_url($learning_subsec['sub_start_url'].'?step='.urlencode($learning_subsec['sub_title'])); ?>" style="color:#757376;"><?php echo esc_html($learning_subsec['sub_title']); ?></a>
                                                                                             </p>
                                                                                         </td>
                                                                                         <td width="50%" align="right" valign="middle" style="padding-bottom: 20px;">
@@ -3296,7 +3319,7 @@ function myst_staff_training_notify_user_with_email_callback(){
                                                                                         ?>
                                                                                         <td width="50%" align="left" valign="middle" style="padding-bottom: 20px;">
                                                                                             <p style="font-size:18px;font-weight:600;">
-                                                                                                <a href="<?php echo $learning_subsec['sub_start_url'].'?step='.urlencode($learning_subsec['sub_title']); ?>" style="color:#757376;"><?php echo $learning_subsec['sub_title']; ?></a>
+                                                                                            <a href="<?php echo esc_url($learning_subsec['sub_start_url'].'?step='.urlencode($learning_subsec['sub_title'])); ?>" style="color:#757376;"><?php echo esc_html($learning_subsec['sub_title']); ?></a>
                                                                                             </p>
                                                                                         </td>
                                                                                         <td width="50%" align="right" valign="middle" style="padding-bottom: 20px;">
@@ -3310,7 +3333,7 @@ function myst_staff_training_notify_user_with_email_callback(){
                                                                                     ?>
                                                                                     <td width="50%" align="left" valign="middle" style="padding-bottom: 20px;">
                                                                                         <p style="font-size:18px;font-weight:600;">
-                                                                                            <a href="<?php echo $learning_subsec['sub_start_url'].'?step='.urlencode($learning_subsec['sub_title']); ?>" style="color:#757376;"><?php echo $learning_subsec['sub_title']; ?></a>
+                                                                                        <a href="<?php echo esc_url($learning_subsec['sub_start_url'].'?step='.urlencode($learning_subsec['sub_title'])); ?>" style="color:#757376;"><?php echo esc_html($learning_subsec['sub_title']); ?></a>
                                                                                         </p>
                                                                                     </td>
                                                                                     <td width="50%" align="right" valign="middle" style="padding-bottom: 20px;">
@@ -3354,11 +3377,11 @@ function myst_staff_training_notify_user_with_email_callback(){
                                                                                 $pro_percentage = 100 / $total_steps;
                                                                                 $pro_percentage = $pro_percentage * $total_completed_step;
                                                                             }
-                                                                            echo '<span>'.round($pro_percentage).'%</span>';
+                                                                            echo '<span>'.esc_html(round($pro_percentage)).'%</span>';
                                                                             $final_per = round($pro_percentage);
                                                                         }else{
     
-                                                                            echo '<span>'.$quiz_score.'%</span>';
+                                                                            echo '<span>'.esc_html($quiz_score).'%</span>';
                                                                             echo esc_html($average);
                                                                             $final_per = $quiz_score;
                                                                         }
@@ -3452,7 +3475,7 @@ function myst_staff_training_notify_user_with_email_callback(){
     <?php
     $mail_html .= ob_get_clean();
 
-    $serverHostname = $_SERVER['HTTP_HOST'];
+    $serverHostname =  sanitize_text_field($_SERVER['HTTP_HOST']);
     $currentDomain = preg_replace('/:\d+$/', '', $serverHostname);
     $headers = array('Content-Type: text/html; charset=UTF-8','From:  <noreply@' . $currentDomain . '>');
     $to = $useremail;
@@ -3465,11 +3488,12 @@ function myst_staff_training_notify_user_with_email_callback(){
 }
 
 //sort learning sections
-add_action('wp_ajax_myst_staff_training_sort_learning_section','myst_staff_training_sort_learning_section');
-add_action('wp_ajax_nopriv_myst_staff_training_sort_learning_section','myst_staff_training_sort_learning_section');
-function myst_staff_training_sort_learning_section(){
+add_action('wp_ajax_mystaff_training_staff_training_sort_learning_section','mystaff_training_staff_training_sort_learning_section');
+add_action('wp_ajax_nopriv_mystaff_training_staff_training_sort_learning_section','mystaff_training_staff_training_sort_learning_section');
+function mystaff_training_staff_training_sort_learning_section(){
     global $wpdb;
-    $orders = sanitize_text_field($_POST['sortingorder']);
+    $sort_orders = sanitize_text_field($_POST['sortingorder']);
+    $orders = $sort_orders;
     
     $ls_table = $wpdb->prefix.'learning_sections';
     foreach($orders as $id => $orderval){
@@ -3485,19 +3509,43 @@ function myst_staff_training_sort_learning_section(){
  * Save quiz data
  * question answer - insert and update
  */
-add_action('wp_ajax_myst_staff_training_save_question_answers_module','myst_staff_training_save_question_answers_module');
-add_action('wp_ajax_nopriv_myst_staff_training_save_question_answers_module','myst_staff_training_save_question_answers_module');
-function myst_staff_training_save_question_answers_module(){
+add_action('wp_ajax_mystaff_training_staff_training_save_question_answers_module','mystaff_training_staff_training_save_question_answers_module');
+add_action('wp_ajax_nopriv_mystaff_training_staff_training_save_question_answers_module','mystaff_training_staff_training_save_question_answers_module');
+function mystaff_training_staff_training_save_question_answers_module(){
     global $wpdb;
 
     $table_name = $wpdb->prefix . 'quiz_details';
     $sectionid = sanitize_text_field($_POST['sectionid']);
-    $title = $sectionid."_".$_POST['subtitle'];
-    $questitle = stripslashes($_POST['questitle']);
-    $answertitle = $_POST['answertitle'];
-    $correctanswer =$_POST['correctanswer'];
-    $quesid = explode("_",$_POST['quesid'])[2];
-    $quizid = sanitize_text_field($_POST['quizid']);
+    $title = $sectionid."_".sanitize_text_field($_POST['subtitle']);
+    $questitle = stripslashes(sanitize_text_field($_POST['questitle']));
+    if (isset($_POST['answertitle']) && is_array($_POST['answertitle'])) {
+        $answertitle = array();
+    
+        foreach ($_POST['answertitle'] as $answer) {
+            $sanitizedVal = sanitize_text_field($answer['val']);
+    
+            $sanitizedId = $answer['id'];
+    
+            $answertitle[] = array('id' => $sanitizedId, 'val' => $sanitizedVal);
+        }
+    
+    } 
+    
+    // $correctanswer =$_POST['correctanswer'];
+    if (isset($_POST['correctanswer'])) {
+        if (is_array($_POST['correctanswer'])) {
+            $correctanswer = array();
+    
+            foreach ($_POST['correctanswer'] as $answer) {
+                $sanitizedAnswer = sanitize_text_field($answer);
+    
+                $correctanswer[] = $sanitizedAnswer;
+            }
+    
+        }}
+    $quesid = explode("_",sanitize_text_field($_POST['quesid']))[2];
+    $quizid = intval($_POST['quizid']);
+
 
     
 
@@ -3541,7 +3589,13 @@ function myst_staff_training_save_question_answers_module(){
     }else if($quizid != ''){
 
         $i=0;
-        $selectedquiz = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}quiz_details WHERE quizid = {$quizid}", ARRAY_A);
+        $selectedquiz = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT * FROM {$wpdb->prefix}quiz_details WHERE quizid = %d",
+                $quizid
+            ),
+            ARRAY_A
+        );
       
         //print_r($selectedquiz['question_list']);
         $questions_arr = json_decode($selectedquiz['question_list'],true);
@@ -3593,14 +3647,14 @@ function myst_staff_training_save_question_answers_module(){
         $response['code'] = 'none';
     }
 
-    echo json_encode($response);
+    echo  wp_json_encode($response);
     die;
 }
 
 //delete answer from quiz
-add_action('wp_ajax_myst_staff_training_quiz_module_delete_answer_backend','myst_staff_training_quiz_module_delete_answer_backend');
-add_action('wp_ajax_nopriv_myst_staff_training_quiz_module_delete_answer_backend','myst_staff_training_quiz_module_delete_answer_backend');
-function myst_staff_training_quiz_module_delete_answer_backend(){
+add_action('wp_ajax_mystaff_training_staff_training_quiz_module_delete_answer_backend','mystaff_training_staff_training_quiz_module_delete_answer_backend');
+add_action('wp_ajax_nopriv_mystaff_training_staff_training_quiz_module_delete_answer_backend','mystaff_training_staff_training_quiz_module_delete_answer_backend');
+function mystaff_training_staff_training_quiz_module_delete_answer_backend(){
     global $wpdb;
 
     $table_name = $wpdb->prefix . 'quiz_details';
@@ -3612,7 +3666,15 @@ function myst_staff_training_quiz_module_delete_answer_backend(){
     $subsectiontitle = sanitize_text_field($_POST['subsectiontitle']);
     $title = $sectionid."_".$subsectiontitle;
 
-    $res = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}quiz_details WHERE quizid={$quizid} AND subsection_title = '{$title}' ",ARRAY_A);
+    $res = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}quiz_details WHERE quizid = %d AND subsection_title = %s",
+            $quizid,
+            $title
+        ),
+        ARRAY_A
+    );
+    
 
     
     $sql = json_decode($res['question_list'],true);
@@ -3632,14 +3694,14 @@ function myst_staff_training_quiz_module_delete_answer_backend(){
         $response['quizid'] = $quizid;
     }
 
-    echo json_encode($response);
+    echo  wp_json_encode($response);
     die;
 }
 
 //delete question from quiz
-add_action('wp_ajax_myst_staff_training_quiz_module_delete_question_backend','myst_staff_training_quiz_module_delete_question_backend');
-add_action('wp_ajax_nopriv_myst_staff_training_quiz_module_delete_question_backend','myst_staff_training_quiz_module_delete_question_backend');
-function myst_staff_training_quiz_module_delete_question_backend(){
+add_action('wp_ajax_mystaff_training_staff_training_quiz_module_delete_question_backend','mystaff_training_staff_training_quiz_module_delete_question_backend');
+add_action('wp_ajax_nopriv_mystaff_training_staff_training_quiz_module_delete_question_backend','mystaff_training_staff_training_quiz_module_delete_question_backend');
+function mystaff_training_staff_training_quiz_module_delete_question_backend(){
     global $wpdb;
 
     $table_name = $wpdb->prefix . 'quiz_details';
@@ -3650,7 +3712,14 @@ function myst_staff_training_quiz_module_delete_question_backend(){
     $subsectiontitle = sanitize_text_field($_POST['subsectiontitle']);
     $title = $sectionid."_".$subsectiontitle;
 
-    $res = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}quiz_details WHERE quizid={$quizid} AND subsection_title = '{$title}' ",ARRAY_A);
+    $res = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}quiz_details WHERE quizid = %d AND subsection_title = %s",
+            $quizid,
+            $title
+        ),
+        ARRAY_A
+    );
 
     $sql = json_decode($res['question_list'],true);
 
@@ -3671,14 +3740,14 @@ function myst_staff_training_quiz_module_delete_question_backend(){
         $response['quizid'] = $quizid;
     }
 
-    echo json_encode($response);
+    echo  wp_json_encode($response);
     die;
 }
 
 //delete quiz from section
-add_action('wp_ajax_myst_staff_training_quiz_module_delete_quiz_backend','myst_staff_training_quiz_module_delete_quiz_backend');
-add_action('wp_ajax_nopriv_myst_staff_training_quiz_module_delete_quiz_backend','myst_staff_training_quiz_module_delete_quiz_backend');
-function myst_staff_training_quiz_module_delete_quiz_backend(){
+add_action('wp_ajax_mystaff_training_staff_training_quiz_module_delete_quiz_backend','mystaff_training_staff_training_quiz_module_delete_quiz_backend');
+add_action('wp_ajax_nopriv_mystaff_training_staff_training_quiz_module_delete_quiz_backend','mystaff_training_staff_training_quiz_module_delete_quiz_backend');
+function mystaff_training_staff_training_quiz_module_delete_quiz_backend(){
     global $wpdb;
 
     $table_name = $wpdb->prefix . 'quiz_details';
@@ -3726,13 +3795,13 @@ function myst_staff_training_quiz_module_delete_quiz_backend(){
         $response['quizid'] = $quizid;
     }
 
-    echo json_encode($response);
+    echo  wp_json_encode($response);
     die;
 }
 
 
 /* SAVE the DATA */
-function myst_learning_modules_save_action_backend() {
+function mystaff_training_learning_modules_save_action_backend() {
 
     global $wpdb;
 
@@ -3774,14 +3843,14 @@ function myst_learning_modules_save_action_backend() {
 
 }
 
-add_action( 'wp_ajax_myst_learning_modules_save_action_backend', 'myst_learning_modules_save_action_backend' );
+add_action( 'wp_ajax_mystaff_training_learning_modules_save_action_backend', 'mystaff_training_learning_modules_save_action_backend' );
 
-add_action( 'wp_ajax_nopriv_myst_learning_modules_save_action_backend', 'myst_learning_modules_save_action_backend' );
+add_action( 'wp_ajax_nopriv_mystaff_training_learning_modules_save_action_backend', 'mystaff_training_learning_modules_save_action_backend' );
 
 
 /* EDIT the DATA */
 
-function myst_staff_training_learning_modules_edit_action_backend() {
+function mystaff_training_staff_training_learning_modules_edit_action_backend() {
 
     global $wpdb;
 
@@ -3797,7 +3866,7 @@ function myst_staff_training_learning_modules_edit_action_backend() {
 
     $table_name = $wpdb->prefix . 'learning_sections';
 
-    $current_section = myst_staff_training_get_specific_section_by_id($section_id);
+    $current_section = mystaff_training_staff_training_get_specific_section_by_id($section_id);
 
     $old_assigned_users = json_decode(stripslashes($current_section->assigned_users));
 
@@ -3903,9 +3972,9 @@ function myst_staff_training_learning_modules_edit_action_backend() {
 
 }
 
-add_action( 'wp_ajax_myst_staff_training_learning_modules_edit_action_backend', 'myst_staff_training_learning_modules_edit_action_backend' );
+add_action( 'wp_ajax_mystaff_training_staff_training_learning_modules_edit_action_backend', 'mystaff_training_staff_training_learning_modules_edit_action_backend' );
 
-add_action( 'wp_ajax_nopriv_myst_staff_training_learning_modules_edit_action_backend', 'myst_staff_training_learning_modules_edit_action_backend' );
+add_action( 'wp_ajax_nopriv_mystaff_training_staff_training_learning_modules_edit_action_backend', 'mystaff_training_staff_training_learning_modules_edit_action_backend' );
 
 
 
@@ -3913,7 +3982,7 @@ add_action( 'wp_ajax_nopriv_myst_staff_training_learning_modules_edit_action_bac
 
 /* DELETE the DATA */
 
-function myst_staff_training_learning_modules_delete_action_backend() {
+function mystaff_training_staff_training_learning_modules_delete_action_backend() {
 
     global $wpdb;
 
@@ -3924,13 +3993,12 @@ function myst_staff_training_learning_modules_delete_action_backend() {
     $quiz_user_tbl = $wpdb->prefix . 'quiz_user_details';
     $quiz_section_score = $wpdb->prefix . 'quiz_section_score';
 
-    $current_section = myst_staff_training_get_specific_section_by_id($section_id);
+    $current_section = mystaff_training_staff_training_get_specific_section_by_id($section_id);
 
     $old_assigned_users = json_decode(stripslashes($current_section->assigned_users));
 
     $delete_data = $wpdb->delete( $table_name , array('id' => $section_id) );
 
-    // $res = $wpdb->get_results("SELECT * FROM {$quiz_tbl} WHERE sectionid={$section_id} ",ARRAY_A);
     $res = $wpdb->get_results(
         $wpdb->prepare(
             "SELECT * FROM {$wpdb->prefix}quiz_details WHERE sectionid = %d",
@@ -3939,7 +4007,6 @@ function myst_staff_training_learning_modules_delete_action_backend() {
         ARRAY_A
     );
     foreach($res as $row) {
-        // $results = $wpdb->get_results("SELECT * FROM {$quiz_user_tbl} WHERE quizid={$row['quizid']} ",ARRAY_A);
         $results = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT * FROM {$wpdb->prefix}quiz_user_details WHERE quizid = %d",
@@ -3955,7 +4022,6 @@ function myst_staff_training_learning_modules_delete_action_backend() {
         $quizdelete = $wpdb->delete($quiz_tbl, array('quizid'=>$row['quizid']));
     }
 
-    // $scoreresult = $wpdb->get_results("SELECT id,sectionid FROM $quiz_section_score WHERE sectionid={$section_id}",ARRAY_A);
     $scoreresult = $wpdb->get_results(
         $wpdb->prepare(
             "SELECT id, sectionid FROM {$wpdb->prefix}quiz_section_score WHERE sectionid = %d",
@@ -3997,13 +4063,13 @@ function myst_staff_training_learning_modules_delete_action_backend() {
 
 }
 
-add_action( 'wp_ajax_myst_staff_training_learning_modules_delete_action_backend', 'myst_staff_training_learning_modules_delete_action_backend' );
+add_action( 'wp_ajax_mystaff_training_staff_training_learning_modules_delete_action_backend', 'mystaff_training_staff_training_learning_modules_delete_action_backend' );
 
-add_action( 'wp_ajax_nopriv_myst_staff_training_learning_modules_delete_action_backend', 'myst_staff_training_learning_modules_delete_action_backend' );
+add_action( 'wp_ajax_nopriv_mystaff_training_staff_training_learning_modules_delete_action_backend', 'mystaff_training_staff_training_learning_modules_delete_action_backend' );
 
 /* Move section to trash*/
 
-function myst_staff_training_learning_modules_trash_action_backend() {
+function mystaff_training_staff_training_learning_modules_trash_action_backend() {
 
     global $wpdb;
 
@@ -4011,7 +4077,7 @@ function myst_staff_training_learning_modules_trash_action_backend() {
 
     $table_name = $wpdb->prefix . 'learning_sections';
 
-    $current_section = myst_staff_training_get_specific_section_by_id($section_id);
+    $current_section = mystaff_training_staff_training_get_specific_section_by_id($section_id);
 
     $old_assigned_users = json_decode(stripslashes($current_section->assigned_users));
 
@@ -4047,13 +4113,13 @@ function myst_staff_training_learning_modules_trash_action_backend() {
 
 }
 
-add_action( 'wp_ajax_myst_staff_training_learning_modules_trash_action_backend', 'myst_staff_training_learning_modules_trash_action_backend' );
+add_action( 'wp_ajax_mystaff_training_staff_training_learning_modules_trash_action_backend', 'mystaff_training_staff_training_learning_modules_trash_action_backend' );
 
-add_action( 'wp_ajax_nopriv_myst_staff_training_learning_modules_trash_action_backend', 'myst_staff_training_learning_modules_trash_action_backend' );
+add_action( 'wp_ajax_nopriv_mystaff_training_staff_training_learning_modules_trash_action_backend', 'mystaff_training_staff_training_learning_modules_trash_action_backend' );
 
 /* Revert the section from trash*/
 
-function myst_staff_training_learning_modules_revert_action_backend() {
+function mystaff_training_staff_training_learning_modules_revert_action_backend() {
 
     global $wpdb;
 
@@ -4061,7 +4127,7 @@ function myst_staff_training_learning_modules_revert_action_backend() {
 
     $table_name = $wpdb->prefix . 'learning_sections';
 
-    $current_section = myst_staff_training_get_specific_section_by_id($section_id);
+    $current_section = mystaff_training_staff_training_get_specific_section_by_id($section_id);
 
     $old_assigned_users = json_decode(stripslashes($current_section->assigned_users));
 
@@ -4097,13 +4163,13 @@ function myst_staff_training_learning_modules_revert_action_backend() {
 
 }
 
-add_action( 'wp_ajax_myst_staff_training_learning_modules_revert_action_backend', 'myst_staff_training_learning_modules_revert_action_backend' );
+add_action( 'wp_ajax_mystaff_training_staff_training_learning_modules_revert_action_backend', 'mystaff_training_staff_training_learning_modules_revert_action_backend' );
 
-add_action( 'wp_ajax_nopriv_myst_staff_training_learning_modules_revert_action_backend', 'myst_staff_training_learning_modules_revert_action_backend' );
+add_action( 'wp_ajax_nopriv_mystaff_training_staff_training_learning_modules_revert_action_backend', 'mystaff_training_staff_training_learning_modules_revert_action_backend' );
 
 /* ASSIGN USER */
 
-function myst_staff_training_learning_modules_assign_users() {
+function mystaff_training_staff_training_learning_modules_assign_users() {
 
 
     global $wpdb;
@@ -4112,11 +4178,12 @@ function myst_staff_training_learning_modules_assign_users() {
 
     $table_name = $wpdb->prefix . 'learning_sections';
 
-    $current_section = myst_staff_training_get_specific_section_by_id($section_id);
+    $current_section = mystaff_training_staff_training_get_specific_section_by_id($section_id);
 
     $old_assigned_users = json_decode(stripslashes($current_section->assigned_users));
 
-    $assigned_users = json_decode(stripslashes($_POST['user_ids']));
+
+    $assigned_users = json_decode(stripslashes(sanitize_text_field($_POST['user_ids'])));
 
     $addUserFlag = isset($_POST['add_user']) && $_POST['add_user'] == true;// farhan
 
@@ -4129,24 +4196,7 @@ function myst_staff_training_learning_modules_assign_users() {
         $assigned_users=$merged_users;
     }
 
-    // recheck this
-     if (WP_DEBUG === true) {
-            $log_file = ABSPATH . 'wp-content/my-plugin-logs.log'; // Adjust the path as needed
-            $timestamp = date("Y-m-d H:i:s");
-            
-            // Convert arrays to string using json_encode or print_r
-            $log_message = $timestamp . ' - Old Assigned Users: ' . json_encode($old_assigned_users) . PHP_EOL;
-            $log_message2 = $timestamp . ' - New Assigned Users: ' . json_encode($assigned_users) . PHP_EOL;
-            $log_message3 = $timestamp . ' - All Users: ' . json_encode($merged_users) . PHP_EOL;
-            $log_message4 = $timestamp . ' - JSON: ' . json_encode($_POST['user_ids']) . PHP_EOL;
-    
-            // Write to log file
-            error_log($log_message, 3, $log_file);
-            error_log($log_message2, 3, $log_file);
-            error_log($log_message3, 3, $log_file);
-            error_log($log_message4, 3, $log_file);
-        }
-        
+   
     if(!empty($assigned_users)){
 
         if(!empty($old_assigned_users)) {
@@ -4236,7 +4286,7 @@ function myst_staff_training_learning_modules_assign_users() {
 
                 $learning_modules = array();
 
-                $learning_modules = myst_staff_training_update_learning_section_module($current_section, $learning_modules);
+                $learning_modules = mystaff_training_staff_training_update_learning_section_module($current_section, $learning_modules);
 
                 update_user_meta($users, 'learning_modules_progress',serialize($learning_modules));
 
@@ -4246,7 +4296,7 @@ function myst_staff_training_learning_modules_assign_users() {
 
                 if(!array_key_exists($section_id , $learning_modules)){
 
-                    $learning_modules = myst_staff_training_update_learning_section_module($current_section, $learning_modules);
+                    $learning_modules = mystaff_training_staff_training_update_learning_section_module($current_section, $learning_modules);
 
                 } else{
 
@@ -4270,7 +4320,7 @@ function myst_staff_training_learning_modules_assign_users() {
 
                         unset($learning_modules[$current_section->id]);
 
-                        $learning_modules = myst_staff_training_update_learning_section_module($current_section, $learning_modules);
+                        $learning_modules = mystaff_training_staff_training_update_learning_section_module($current_section, $learning_modules);
 
                     }else{
 
@@ -4338,7 +4388,7 @@ function myst_staff_training_learning_modules_assign_users() {
                  $f=$wpdb->update($wpdb->users,array('self_assigned_date' => current_time('mysql', 1),),array('ID' => $user_id,));
 
     }else{
-        $assigned_data = $wpdb->update( $table_name , array( 'assigned_users' => $_POST['user_ids']  ), array( 'id' => $section_id ) );
+        $assigned_data = $wpdb->update( $table_name , array( 'assigned_users' => sanitize_text_field($_POST['user_ids'])  ), array( 'id' => $section_id ) );
     }
 
     
@@ -4349,16 +4399,16 @@ function myst_staff_training_learning_modules_assign_users() {
 
     }else{
         
-         echo $wpdb->last_error;
+        echo esc_html($wpdb->last_error);
     }
     
 
     exit;
 
 }
-add_action( 'wp_ajax_myst_staff_training_learning_modules_assign_users', 'myst_staff_training_learning_modules_assign_users' );
+add_action( 'wp_ajax_mystaff_training_staff_training_learning_modules_assign_users', 'mystaff_training_staff_training_learning_modules_assign_users' );
 
-add_action( 'wp_ajax_nopriv_myst_staff_training_learning_modules_assign_users', 'myst_staff_training_learning_modules_assign_users' );
+add_action( 'wp_ajax_nopriv_mystaff_training_staff_training_learning_modules_assign_users', 'mystaff_training_staff_training_learning_modules_assign_users' );
 
 
 
@@ -4370,14 +4420,14 @@ add_action( 'wp_ajax_nopriv_myst_staff_training_learning_modules_assign_users', 
 
 // Update user car to for self assign feature
 
-function myst_staff_training_update_user_cat(){
+function mystaff_training_staff_training_update_user_cat(){
     
     global $wpdb;
     
 
     $table_name = $wpdb->prefix . 'learning_sections';
     
-    $cat_value = $_POST['cat_value'];
+    $cat_value = sanitize_text_field($_POST['cat_value']);
     $user_id = sanitize_text_field($_POST['user_id']);
     
     $wpdb->update(
@@ -4390,14 +4440,14 @@ function myst_staff_training_update_user_cat(){
     if($wpdb->last_error == '') {
         echo "assigned";
     }else{
-         echo $wpdb->last_error;
+        echo esc_html($wpdb->last_error);
     }
 
 
     exit;
     
 }
-add_action( 'wp_ajax_myst_staff_training_update_user_cat', 'myst_staff_training_update_user_cat' );
+add_action( 'wp_ajax_mystaff_training_staff_training_update_user_cat', 'mystaff_training_staff_training_update_user_cat' );
 
 
 
@@ -4406,25 +4456,30 @@ add_action( 'wp_ajax_myst_staff_training_update_user_cat', 'myst_staff_training_
 
 /* DELETE the DATA */
 
-function myst_staff_training_check_section_title($title, $section_id = null) {
+function mystaff_training_staff_training_check_section_title($title, $section_id = null) {
 
     global $wpdb;
 
     $table_name = $wpdb->prefix . 'learning_sections';
 
-    $learning_details = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}learning_sections WHERE title= '$title'");
+    $learning_details = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}learning_sections WHERE title = %s",
+            $title
+        )
+    );
   
     
 
-    myst_pr($learning_details);
+    mystaff_training_pr($learning_details);
 
 }
 
 
 
-// add_action('admin_init','myst_straff_training_update_table');
+// add_action('admin_init','mystaff_training_straff_training_update_table');
 
-function myst_straff_training_update_table(){
+function mystaff_training_straff_training_update_table(){
 
     global $wpdb;
 
@@ -4438,7 +4493,7 @@ function myst_straff_training_update_table(){
 
 
 
-function myst_staff_training_update_learning_section_module($current_section, $learning_modules){
+function mystaff_training_staff_training_update_learning_section_module($current_section, $learning_modules){
 
     $data = array();
 
@@ -4493,26 +4548,24 @@ function myst_staff_training_update_learning_section_module($current_section, $l
 }
 
 /**Redo course from dashboard */
-add_action('wp_ajax_myst_staff_training_redo_course_module','myst_staff_training_redo_course_module');
-add_action('wp_ajax_nopriv_myst_staff_training_redo_course_module','myst_staff_training_redo_course_module');
-function myst_staff_training_redo_course_module(){
+add_action('wp_ajax_mystaff_training_staff_training_redo_course_module','mystaff_training_staff_training_redo_course_module');
+add_action('wp_ajax_nopriv_mystaff_training_staff_training_redo_course_module','mystaff_training_staff_training_redo_course_module');
+function mystaff_training_staff_training_redo_course_module(){
     global $wpdb;
     $data = array();
     if(is_user_logged_in()){
         $user_id = get_current_user_id();
     }
     $secid = sanitize_text_field($_POST['sectionid']);
-    $quiz_table = $wpdb->prefix . 'quiz_details';
-    $quiz_user_tbl = $wpdb->prefix . 'quiz_user_details';
-    $quiz_section_score = $wpdb->prefix . 'quiz_section_score';
-    $coin_wallet = $wpdb->prefix . 'coin_wallet';
+    $quiz_table = $wpdb->prefix.'quiz_details';
+    $quiz_user_tbl = $wpdb->prefix.'quiz_user_details';
+    $quiz_section_score = $wpdb->prefix.'quiz_section_score';
+    $coin_wallet = $wpdb->prefix.'coin_wallet';
     $redocourse_coins = array();
     $results = $wpdb->get_results(
         $wpdb->prepare(
-            "SELECT id FROM %s WHERE userid = %d AND quizid IN (SELECT quizid FROM %s WHERE sectionid = %d)",
-            $quiz_user_tbl,
+            "SELECT id FROM {$wpdb->prefix}quiz_user_details WHERE userid = %d AND quizid IN (SELECT quizid FROM {$wpdb->prefix}quiz_details WHERE sectionid = %d)",
             $user_id,
-            $quiz_table,
             $secid
         ),
         ARRAY_A
@@ -4522,7 +4575,13 @@ function myst_staff_training_redo_course_module(){
             $delete = $wpdb->delete($quiz_user_tbl, array('id' => $value['id']));
         }
     }
-    $wallet_result = $wpdb->get_row("SELECT * FROM  {$wpdb->prefix}coin_wallet where user_id = $user_id",ARRAY_A);
+    $wallet_result = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}coin_wallet WHERE user_id = %d",
+            $user_id
+        ),
+        ARRAY_A
+    );
     $scoreresult = $wpdb->get_results(
         $wpdb->prepare(
             "SELECT id, sectionid, userid, coins FROM {$wpdb->prefix}quiz_section_score WHERE sectionid = %d",
@@ -4576,9 +4635,9 @@ function myst_staff_training_redo_course_module(){
     //return $learning_modules;
 }
 
-add_action('wp_ajax_myst_staff_training_atl_create_order','myst_staff_training_atl_create_order');
-add_action('wp_ajax_nopriv_myst_staff_training_atl_create_order','myst_staff_training_atl_create_order');
-function myst_staff_training_atl_create_order(){
+add_action('wp_ajax_mystaff_training_staff_training_atl_create_order','mystaff_training_staff_training_atl_create_order');
+add_action('wp_ajax_nopriv_mystaff_training_staff_training_atl_create_order','mystaff_training_staff_training_atl_create_order');
+function mystaff_training_staff_training_atl_create_order(){
     global $wpdb;
     $orders_tbl = $wpdb->prefix.'atl_orders';
     $products_tbl = $wpdb->prefix.'atl_products';
@@ -4587,12 +4646,15 @@ function myst_staff_training_atl_create_order(){
     if(is_user_logged_in()){
         $user_id = get_current_user_id();
     }
-    $productid = sanitize_text_field($_POST['productid']);
-    $productprice = sanitize_text_field($_POST['productprice']);
+    $product_id = sanitize_text_field($_POST['productid']);
+    $productid=$product_id;
+
+    $product_price = sanitize_text_field($_POST['productprice']);
+    $productprice = $product_price;
+
     $current_date = date('d-m-Y H:i:s');
     $insert = $wpdb->insert($orders_tbl,array('product_id' => $productid,'user_id'=>$user_id,'order_created' => current_time('mysql', 1),'order_total'=> $productprice, 'payment_method' => 'COD','order_status' => 'Processing'));
     $orderid = $wpdb->insert_id;
-    // $row = $wpdb->get_row("SELECT total_coins FROM $coin_wallet WHERE user_id = $user_id",ARRAY_A);
     $row = $wpdb->get_row(
     $wpdb->prepare(
         "SELECT total_coins FROM {$wpdb->prefix}coin_wallet WHERE user_id = %d",
@@ -4604,12 +4666,7 @@ function myst_staff_training_atl_create_order(){
 
     $update = $wpdb->update($coin_wallet, array('total_coins' => $total_coins), array('user_id'=>$user_id));
 
-    /* $get_coins = $wpdb->get_results("SELECT total_coins from $coin_wallet where user_id=".$user_id, ARRAY_A);
-    if($get_coins[0]['total_coins'] > $product_price){
-        $disabled = false; //user can buy again this product - remove class disable
-    }else{
-        $disabled = true; //user doesn't have enough coins to buy this product again.
-    } */
+
 
     
         // add code from order email template to functions.php by kashif at 12feb 5:47pm
@@ -4629,7 +4686,13 @@ function myst_staff_training_atl_create_order(){
       $username = $userdata->user_login;
 
     
-    $get_product_detail = $wpdb->get_row("SELECT product_name FROM {$wpdb->prefix}atl_products WHERE id = $product_id",ARRAY_A);
+    $get_product_detail = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT product_name FROM {$wpdb->prefix}atl_products WHERE id = %d",
+            $product_id
+        ),
+        ARRAY_A
+    );
 
     $product_name = $get_product_detail['product_name'];
     
@@ -4730,7 +4793,7 @@ function myst_staff_training_atl_create_order(){
                             <tbody>
                                 <tr>
                                     <td style="padding:15px 10px;" align="center">
-                                        <?php  myst_staff_training_get_custom_logo_function(); ?>
+                                        <?php  mystaff_training_staff_training_get_custom_logo_function(); ?>
                                     </td>
                                 </tr>
                             </tbody>
@@ -4855,7 +4918,7 @@ function myst_staff_training_atl_create_order(){
     </html>
     <?php
     $mail_html .= ob_get_clean();
-    $serverHostname = $_SERVER['HTTP_HOST'];
+    $serverHostname =  sanitize_text_field($_SERVER['HTTP_HOST']);
 $currentDomain = preg_replace('/:\d+$/', '', $serverHostname);
             $headers = array('Content-Type: text/html; charset=UTF-8','From:  <noreply@' . $currentDomain . '>'); 
     $to = esc_attr( get_option('em_id_list') );
@@ -4869,15 +4932,15 @@ $currentDomain = preg_replace('/:\d+$/', '', $serverHostname);
 
     
         // Respond after the API call
-        echo json_encode(array("success" => "success", "disabled" => ''));
+        echo  wp_json_encode(array("success" => "success", "disabled" => ''));
         $sent = wp_mail($to,$subject,$mail_html,$headers);
         die();
 }
 
 //update order status from wp admin
-add_action('wp_ajax_update_order_status','myst_staff_training_atl_update_order_status');
-add_action('wp_ajax_nopriv_update_order_status','myst_staff_training_atl_update_order_status');
-function myst_staff_training_atl_update_order_status(){
+add_action('wp_ajax_update_order_status','mystaff_training_staff_training_atl_update_order_status');
+add_action('wp_ajax_nopriv_update_order_status','mystaff_training_staff_training_atl_update_order_status');
+function mystaff_training_staff_training_atl_update_order_status(){
     global $wpdb;
     $response = array();
     $orderid = sanitize_text_field($_POST['order_id']);
@@ -4892,12 +4955,12 @@ function myst_staff_training_atl_update_order_status(){
         
         print_r($wpdb->print_error());
     }
-    echo json_encode($response);
+    echo  wp_json_encode($response);
     die();
 }
 
 //Delete order from wp-admin
-function myst_staff_training_atl_delete_order(){
+function mystaff_training_staff_training_atl_delete_order(){
     global $wpdb;
     $orderid = sanitize_text_field($_POST['order_id']);
     $table_name = $wpdb->prefix . 'atl_orders';
@@ -4907,11 +4970,11 @@ function myst_staff_training_atl_delete_order(){
     }
     die;
 }
-add_action('wp_ajax_myst_staff_training_atl_delete_order','myst_staff_training_atl_delete_order');
-add_action('wp_ajax_nopriv_myst_staff_training_atl_delete_order','myst_staff_training_atl_delete_order');
+add_action('wp_ajax_mystaff_training_staff_training_atl_delete_order','mystaff_training_staff_training_atl_delete_order');
+add_action('wp_ajax_nopriv_mystaff_training_staff_training_atl_delete_order','mystaff_training_staff_training_atl_delete_order');
 
 //update user wallet points from wp admin
-function myst_staff_training_modify_user_wallet_points(){
+function mystaff_training_staff_training_modify_user_wallet_points(){
     $response = array();
     global $wpdb;
     $points = sanitize_text_field($_POST['points']);
@@ -4922,18 +4985,17 @@ function myst_staff_training_modify_user_wallet_points(){
         $response['success'] = 'updated';
         $response['updated_points'] = $points;
     }
-    echo json_encode($response);
+    echo  wp_json_encode($response);
     die;
 }
-add_action('wp_ajax_myst_staff_training_modify_user_wallet_points','myst_staff_training_modify_user_wallet_points');
-add_action('wp_ajax_nopriv_myst_staff_training_modify_user_wallet_points','myst_staff_training_modify_user_wallet_points');
+add_action('wp_ajax_mystaff_training_staff_training_modify_user_wallet_points','mystaff_training_staff_training_modify_user_wallet_points');
+add_action('wp_ajax_nopriv_mystaff_training_staff_training_modify_user_wallet_points','mystaff_training_staff_training_modify_user_wallet_points');
 
 //get quiz data from section id and user id
-function myst_staff_training_fetch_quiz_by_u_s($sectionid, $userid){
+function mystaff_training_staff_training_fetch_quiz_by_u_s($sectionid, $userid){
     global $wpdb;
     $quiztable = $wpdb->prefix.'quiz_details';
     $quiz_user = $wpdb->prefix.'quiz_user_details';
-    // $score_sql = $wpdb->get_results("SELECT quizid,score FROM {$quiz_user} WHERE userid={$userid} and quizid IN (SELECT quizid FROM {$quiztable} WHERE sectionid={$sectionid}) ",ARRAY_A);
     
 $score_sql = $wpdb->get_results(
     $wpdb->prepare(
@@ -4974,7 +5036,7 @@ $score_sql = $wpdb->get_results(
                 $cls = 'trophyx.png';
                 $bgcolor = 'style="background:#000;"';
             endif;
-            $average = '<img src="'.st_my_plugin_dir_folder.'/images/'.$cls.'" width="40px" height="40px" '.$bgcolor.' />';
+            $average = '<img src="'.mystaff_training_plugin_dir_folder.'/images/'.$cls.'" width="40px" height="40px" '.$bgcolor.' />';
         }else if($quiz_score == 0 || $quiz_score == ''){
             $average = '';
         }
@@ -4982,7 +5044,7 @@ $score_sql = $wpdb->get_results(
         ?>
 
 <div class="trophy-image">
-    <?php echo esc_html($average); ?>
+    <?php echo $average; ?>
     <p>
         <?php echo esc_html($quiz_score); ?>
     </p>
@@ -4992,9 +5054,9 @@ $score_sql = $wpdb->get_results(
     }
 }
 
-add_action('after_setup_theme', 'myst_staff_training_remove_admin_bar');
+add_action('after_setup_theme', 'mystaff_training_staff_training_remove_admin_bar');
 
-function myst_staff_training_remove_admin_bar() {
+function mystaff_training_staff_training_remove_admin_bar() {
 
 if (!current_user_can('administrator') && !is_admin()) {
 
@@ -5012,7 +5074,7 @@ if (!current_user_can('administrator') && !is_admin()) {
 
 // function add_content_after($content) {
 
-//     $after_content = "[myst_learning_modules_action_btn]";
+//     $after_content = "[mystaff_training_learning_modules_action_btn]";
 
 //     $fullcontent = $content . $after_content;
 
@@ -5022,7 +5084,7 @@ if (!current_user_can('administrator') && !is_admin()) {
 
 // add_filter('the_content', 'add_content_for_completed_sections');
 // for adding quiz section in subsection complted url
-function myst_staff_training_add_content_for_completed_subsections_pages($content) {
+function mystaff_training_staff_training_add_content_for_completed_subsections_pages($content) {
     global $wpdb;
 
     // Replace 'your_custom_table' with the actual name of your custom table
@@ -5044,7 +5106,7 @@ function myst_staff_training_add_content_for_completed_subsections_pages($conten
 
                     if ($sub_completed_url === get_permalink()) {
                         // Apply the shortcode if the condition is met
-                        $after_content = '[myst_learning_modules_action_btn]';
+                        $after_content = '[mystaff_training_learning_modules_action_btn]';
                         $fullcontent = $content . $after_content;
                         return $fullcontent;
                     }
@@ -5057,10 +5119,10 @@ function myst_staff_training_add_content_for_completed_subsections_pages($conten
 }
 
 // Add the filter
-add_filter('the_content', 'myst_staff_training_add_content_for_completed_subsections_pages');
+add_filter('the_content', 'mystaff_training_staff_training_add_content_for_completed_subsections_pages');
 
 
-function myst_staff_training_get_display_name($user_id) {
+function mystaff_training_staff_training_get_display_name($user_id) {
     if (!$user = get_userdata($user_id))
         return false;
     return $user->data->display_name;
@@ -5071,17 +5133,29 @@ add_filter( 'recovery_mode_email', function( $email ) {
     return $email;
 } );
 
-function myst_staff_training_coin_shopping_get_wallet_balance($userid){
+function mystaff_training_staff_training_coin_shopping_get_wallet_balance($userid){
     global $wpdb;
     $tablename= $wpdb->prefix.'coin_wallet';
-    $total_coins = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}coin_wallet WHERE user_id = {$userid}",ARRAY_A);
+    $total_coins = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}coin_wallet WHERE user_id = %d",
+            $userid
+        ),
+        ARRAY_A
+    );
+    
 
     
-    return $total_coins['total_coins'];
+    // return $total_coins['total_coins'];
+      if ($total_coins !== null) {
+        return $total_coins['total_coins'];
+    } else {
+        return 0;
+    }
 }
 
 /* SAVE the product */
-function myst_staff_training_insert_product_shop_items() {
+function mystaff_training_staff_training_insert_product_shop_items() {
 
     global $wpdb;
     if($_POST['status'] == 'add') {
@@ -5116,10 +5190,10 @@ function myst_staff_training_insert_product_shop_items() {
     }
     die;
 }
-add_action( 'wp_ajax_myst_staff_training_insert_product_shop_items', 'myst_staff_training_insert_product_shop_items' );
-add_action( 'wp_ajax_nopriv_myst_staff_training_insert_product_shop_items', 'myst_staff_training_insert_product_shop_items' );
+add_action( 'wp_ajax_mystaff_training_staff_training_insert_product_shop_items', 'mystaff_training_staff_training_insert_product_shop_items' );
+add_action( 'wp_ajax_nopriv_mystaff_training_staff_training_insert_product_shop_items', 'mystaff_training_staff_training_insert_product_shop_items' );
 
-function myst_staff_training_delete_product_shop_items(){
+function mystaff_training_staff_training_delete_product_shop_items(){
     global $wpdb;
     $productid = sanitize_text_field($_POST['product_id']);
     $table_name = $wpdb->prefix . 'atl_products';
@@ -5129,10 +5203,10 @@ function myst_staff_training_delete_product_shop_items(){
     }
     die;
 }
-add_action('wp_ajax_myst_staff_training_delete_product_shop_items','myst_staff_training_delete_product_shop_items');
-add_action('wp_ajax_nopriv_myst_staff_training_delete_product_shop_items','myst_staff_training_delete_product_shop_items');
+add_action('wp_ajax_mystaff_training_staff_training_delete_product_shop_items','mystaff_training_staff_training_delete_product_shop_items');
+add_action('wp_ajax_nopriv_mystaff_training_staff_training_delete_product_shop_items','mystaff_training_staff_training_delete_product_shop_items');
 
-function myst_staff_training_get_custom_logo_function(){
+function mystaff_training_staff_training_get_custom_logo_function(){
      
     if( get_option( 'atls_img' ) != '') : ?>
 <img src="<?php echo wp_get_attachment_image_url(get_option( 'atls_img' ),'medium'); ?>" class="login-logo" />
